@@ -1,7 +1,7 @@
 export default function CTA() {
   return (
     <section id="contact" className="px-6 py-24">
-      <div className="mx-auto max-w-6xl overflow-hidden rounded-[2rem] bg-black px-6 py-20 text-center text-white md:px-12">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-4xl bg-black px-6 py-20 text-center text-white md:px-12">
         <div className="mx-auto max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-widest text-gray-400">
             Get started
