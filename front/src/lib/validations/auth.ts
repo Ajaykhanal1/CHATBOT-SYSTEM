@@ -50,3 +50,42 @@ export const registerSchema = z.object({
 });
 
 export type RegisterFormData = z.infer<typeof registerSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .min(1, "Email is required")
+    .max(254, "Email is too long")
+    .email("Please enter a valid email address")
+    .refine((email) => !/\s/.test(email), "Email cannot contain spaces")
+    .refine(
+      (email) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email),
+      "Please enter a valid email address",
+    )
+    .transform((email) => email.toLowerCase()),
+});
+
+export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>; 
+
+
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(1, "Password is required")
+      .min(8, "Password must be at least 8 characters"),
+
+    confirmPassword: z
+      .string()
+      .min(1, "Confirm password is required"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordFormData = z.infer<
+  typeof resetPasswordSchema
+>;
+
