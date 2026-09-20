@@ -1,0 +1,25 @@
+{
+  "name": "chatbot-system",
+  "version": "1.0.0",
+  "description": "![Image](https://images.openai.com/static-rsc-4/ZjBa6EuiQmWFSVe6JEcMpasodeK0OmD5hK0Re61gtt72OyozyMDnnL-BArmH49u8TU6oFlhAhVo724w8TTkTf3LDPOKiSfAo1DhlbNFz4_ReFaJqBD6Rtwze21fm8nnSN45u4aCkiqCrSqdfbaUsXHlHan1SL8GPu-_86IrYHTAhPHu7BpGbTHPFrCmkEAZ3?purpose=fullsize)",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm --prefix front run dev\" \"npm --prefix back run dev\"",
+    "start": "concurrently \"npm --prefix front run dev\" \"npm --prefix back run start\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ajaykhanal1/CHATBOT-SYSTEM.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ajaykhanal1/CHATBOT-SYSTEM/issues"
+  },
+  "homepage": "https://github.com/Ajaykhanal1/CHATBOT-SYSTEM#readme",
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}
