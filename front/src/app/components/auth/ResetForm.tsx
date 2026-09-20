@@ -1,22 +1,32 @@
-
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 
 import {
   resetPasswordSchema,
   type ResetPasswordFormData,
 } from "../../../lib/validations/auth";
 
+import { api } from "../../../lib/axios/axios";
+
 export default function ResetForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const token = searchParams.get("token");
 
   const {
     register,
@@ -29,16 +39,40 @@ export default function ResetForm() {
   const onSubmit = async (data: ResetPasswordFormData) => {
     setIsLoading(true);
     setSuccessMessage("");
+    setErrorMessage("");
+
+    if (!token) {
+      setErrorMessage("Invalid or missing reset link.");
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      // API call here
-      console.log("Reset password data:", data);
-
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await api.post("/auth/reset-password", {
+        token,
+        password: data.password,
+      });
 
       setSuccessMessage(
         "Your password has been reset successfully."
       );
+
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
+    } catch (error: unknown) {
+      console.error("Reset password error:", error);
+
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(
+          error.response?.data?.message ||
+            "Something went wrong. Please try again."
+        );
+      } else {
+        setErrorMessage(
+          "Something went wrong. Please try again."
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -75,6 +109,7 @@ export default function ResetForm() {
           className="space-y-5"
           noValidate
         >
+
           {/* New Password */}
           <div>
             <label
@@ -161,10 +196,17 @@ export default function ResetForm() {
             )}
           </div>
 
-          {/* Success Message */}
+          {/* Success */}
           {successMessage && (
             <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
               {successMessage}
+            </div>
+          )}
+
+          {/* Error */}
+          {errorMessage && (
+            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {errorMessage}
             </div>
           )}
 

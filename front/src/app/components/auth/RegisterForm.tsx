@@ -4,6 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { api } from "../../../lib/axios/axios";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 import {
   registerSchema,
@@ -14,6 +17,8 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
+
+  const router = useRouter();
 
   const {
     register,
@@ -34,32 +39,20 @@ export default function RegisterForm() {
     setIsLoading(true);
 
     try {
-      console.log("Registration data:", data);
-
-      // Your actual API:
-      //
-      // const response = await fetch("/api/auth/register", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(data),
-      // });
-      //
-      // const result = await response.json();
-      //
-      // if (!response.ok) {
-      //   throw new Error(result.message);
-      // }
-
-    } catch (error) {
+      const response = await api.post("/auth/register", data);
+      console.log("Registration successful:", response.data);
+      router.push("/login");
+    } catch (error: unknown) {
       console.error("Registration error:", error);
 
-      setApiError(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong during registration."
-      );
+      if (axios.isAxiosError(error)) {
+        setApiError(
+          error.response?.data?.message ||
+          "Something went wrong during registration."
+        );
+      } else {
+        setApiError("Something went wrong during registration.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -158,11 +151,10 @@ export default function RegisterForm() {
               autoComplete="name"
               {...register("name")}
               aria-invalid={!!errors.name}
-              className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition ${
-                errors.name
+              className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition ${errors.name
                   ? "border-red-500 focus:ring-1 focus:ring-red-500"
                   : "border-gray-300 focus:border-black focus:ring-1 focus:ring-black"
-              }`}
+                }`}
             />
 
             {errors.name && (
@@ -188,11 +180,10 @@ export default function RegisterForm() {
               autoComplete="email"
               {...register("email")}
               aria-invalid={!!errors.email}
-              className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition ${
-                errors.email
+              className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition ${errors.email
                   ? "border-red-500 focus:ring-1 focus:ring-red-500"
                   : "border-gray-300 focus:border-black focus:ring-1 focus:ring-black"
-              }`}
+                }`}
             />
 
             {errors.email && (
@@ -219,11 +210,10 @@ export default function RegisterForm() {
                 autoComplete="new-password"
                 {...register("password")}
                 aria-invalid={!!errors.password}
-                className={`w-full rounded-xl border px-4 py-3 pr-20 text-sm outline-none transition ${
-                  errors.password
+                className={`w-full rounded-xl border px-4 py-3 pr-20 text-sm outline-none transition ${errors.password
                     ? "border-red-500 focus:ring-1 focus:ring-red-500"
                     : "border-gray-300 focus:border-black focus:ring-1 focus:ring-black"
-                }`}
+                  }`}
               />
 
               <button

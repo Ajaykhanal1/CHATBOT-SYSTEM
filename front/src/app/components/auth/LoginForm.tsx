@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, LoginFormData } from "../../../lib/validations/auth";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { api } from "../../../lib/axios/axios";
+import { useGoogleLogin } from "@react-oauth/google";
 
 import Link from "next/link";
 
@@ -11,6 +15,47 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
+  const router = useRouter();
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setApiError("");
+      setIsLoading(true);
+
+      try {
+        // Send Google information to your backend
+        const response = await api.post("/auth/google", {
+          credential: tokenResponse.access_token,
+        });
+
+        const { token, user } = response.data;
+
+        // Save login information
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // Go to chat
+        router.push("/chat");
+      } catch (error: unknown) {
+        console.error("Google login error:", error);
+
+        if (axios.isAxiosError(error)) {
+          setApiError(
+            error.response?.data?.message ||
+            "Google login failed."
+          );
+        } else {
+          setApiError("Google login failed.");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    },
+
+    onError: () => {
+      setApiError("Google login failed.");
+    },
+  });
 
   const {
     register,
@@ -30,18 +75,34 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
-      console.log("Login data:", data);
+      const response = await api.post("/auth/login", {
+        email: data.email,
+        password: data.password,
+      });
 
-      // API call here
-      // await fetch("/api/auth/login", ...)
+      const { token, user } = response.data;
 
-    } catch (error) {
-      console.error(error);
-      setApiError("Invalid email or password. Please try again.");
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      router.push("/chat");
+    } catch (error: unknown) {
+      console.error("Login error:", error);
+
+      if (axios.isAxiosError(error)) {
+        setApiError(
+          error.response?.data?.message ||
+          "Invalid email or password."
+        );
+      } else {
+        setApiError("Something went wrong during login.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
+
+
 
   return (
     <div className="flex min-h-screen items-center justify-center px-6 py-12 text-black">
@@ -66,6 +127,7 @@ export default function LoginForm() {
           type="button"
           disabled={isLoading}
           className="mt-8 flex w-full items-center justify-center gap-3 rounded-xl border border-gray-300 px-4 py-3 text-sm font-medium transition hover:bg-gray-50 disabled:opacity-50"
+          onClick={() => googleLogin()}
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
@@ -125,8 +187,8 @@ export default function LoginForm() {
               {...register("email")}
               aria-invalid={!!errors.email}
               className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition ${errors.email
-                  ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                  : "border-gray-300 focus:border-black focus:ring-1 focus:ring-black"
+                ? "border-red-500 focus:ring-1 focus:ring-red-500"
+                : "border-gray-300 focus:border-black focus:ring-1 focus:ring-black"
                 }`}
             />
 
@@ -164,8 +226,8 @@ export default function LoginForm() {
                 {...register("password")}
                 aria-invalid={!!errors.password}
                 className={`w-full rounded-xl border px-4 py-3 pr-20 text-sm outline-none transition ${errors.password
-                    ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                    : "border-gray-300 focus:border-black focus:ring-1 focus:ring-black"
+                  ? "border-red-500 focus:ring-1 focus:ring-red-500"
+                  : "border-gray-300 focus:border-black focus:ring-1 focus:ring-black"
                   }`}
               />
 

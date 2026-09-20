@@ -3,15 +3,20 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+
 import {
   forgotPasswordSchema,
   type ForgotPasswordFormData,
 } from "../../../lib/validations/auth";
-import { zodResolver } from "@hookform/resolvers/zod";
+
+import { api } from "../../../lib/axios/axios";
 
 export default function ForgotForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const {
     register,
@@ -24,15 +29,27 @@ export default function ForgotForm() {
   const onSubmit = async (data: ForgotPasswordFormData) => {
     setIsLoading(true);
     setSuccessMessage("");
+    setErrorMessage("");
 
     try {
-      // API call here
-      console.log("Forgot password data:", data);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await api.post("/auth/forgot-password", {
+        email: data.email,
+      });
 
       setSuccessMessage(
         "If an account exists with this email, we have sent a password reset link."
       );
+    } catch (error: unknown) {
+      console.error("Forgot password error:", error);
+
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(
+          error.response?.data?.message ||
+            "Something went wrong. Please try again."
+        );
+      } else {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -42,7 +59,6 @@ export default function ForgotForm() {
     <div className="flex min-h-screen items-center justify-center bg-white px-4">
       <div className="w-full max-w-md">
 
-        {/* Logo */}
         <div className="mb-8 flex justify-center">
           <Link
             href="/"
@@ -52,7 +68,6 @@ export default function ForgotForm() {
           </Link>
         </div>
 
-        {/* Heading */}
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">
             Forgot your password?
@@ -64,13 +79,11 @@ export default function ForgotForm() {
           </p>
         </div>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-5"
           noValidate
         >
-          {/* Email */}
           <div>
             <label
               htmlFor="email"
@@ -93,7 +106,6 @@ export default function ForgotForm() {
               }`}
             />
 
-            {/* Validation Error */}
             {errors.email && (
               <p className="mt-1.5 text-xs text-red-500">
                 {errors.email.message}
@@ -101,14 +113,18 @@ export default function ForgotForm() {
             )}
           </div>
 
-          {/* Success Message */}
           {successMessage && (
             <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
               {successMessage}
             </div>
           )}
 
-          {/* Submit Button */}
+          {errorMessage && (
+            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {errorMessage}
+            </div>
+          )}
+
           <button
             type="submit"
             disabled={isLoading}
@@ -125,7 +141,6 @@ export default function ForgotForm() {
           </button>
         </form>
 
-        {/* Back to Login */}
         <div className="mt-6 text-center">
           <Link
             href="/login"
