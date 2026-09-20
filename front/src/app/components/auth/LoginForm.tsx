@@ -10,12 +10,15 @@ import { api } from "../../../lib/axios/axios";
 import { useGoogleLogin } from "@react-oauth/google";
 
 import Link from "next/link";
+import { useAuthStore } from "@/app/store/authStore";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   const router = useRouter();
+
+    const setUser = useAuthStore((state) => state.setUser);
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -33,6 +36,8 @@ export default function LoginForm() {
         // Save login information
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
+        
+        setUser(user);
 
         // Go to chat
         router.push("/chat");
@@ -84,6 +89,7 @@ export default function LoginForm() {
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
+      setUser(user);
 
       router.push("/chat");
     } catch (error: unknown) {

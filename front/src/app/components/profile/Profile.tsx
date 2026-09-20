@@ -1,10 +1,27 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/app/store/authStore";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function Profile() {
     const router = useRouter();
+    const user = useAuthStore((state) => state.user);
+    const logout = useAuthStore((state) => state.logout);
+
+
 
     const handleLogout = () => {
+        logout();
         localStorage.removeItem("token");
         localStorage.removeItem("user");
 
@@ -20,18 +37,33 @@ export default function Profile() {
                         A
                     </div>
 
-                    <h1 className="text-2xl font-bold">Ajay Khanal</h1>
-                    <p className="text-gray-500">ajay@example.com</p>
+                    <h1 className="text-2xl font-bold">{user?.name}</h1>
+                    <p className="text-gray-500">{user?.email}</p>
                 </div>
 
-                <div className="space-y-3">
-                    <button
-                        onClick={handleLogout}
-                        className="w-full rounded-lg bg-red-500 px-4 py-3 font-medium text-white hover:bg-red-600"
-                    >
+                <AlertDialog>
+                    <AlertDialogTrigger className="cursor-pointer w-full rounded-lg bg-gray-600 px-4 py-3 font-medium text-white">
                         Log out
-                    </button>
-                </div>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent className="-translate-y-35 h-50 w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
+
+                            <AlertDialogDescription>
+                                You will need to sign in again to access your account.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+
+                        <AlertDialogFooter >
+                            <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+
+                            <AlertDialogAction className="cursor-pointer" onClick={handleLogout}>
+                                Log out
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
         </div>
     );
