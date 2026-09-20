@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, LoginFormData } from "../../../lib/validations/auth";
+
 import Link from "next/link";
 
 export default function LoginForm() {
@@ -8,55 +12,31 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-
-  const [errors, setErrors] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setApiError("");
-
-    const newErrors = {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
       email: "",
       password: "",
-    };
+      rememberMe: false,
+    },
+  });
 
-    // Email validation
-    if (!email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-
-    // Password validation
-    if (!password) {
-      newErrors.password = "Password is required";
-    } else if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-
-    setErrors(newErrors);
-
-    // Stop if validation fails
-    if (newErrors.email || newErrors.password) {
-      return;
-    }
-
+  const onSubmit = async (data: LoginFormData) => {
+    setApiError("");
     setIsLoading(true);
 
     try {
-      // Replace with your actual backend API call
-      // const response = await fetch("/api/auth/login", { ... })
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      console.log("Login data:", data);
 
-      console.log("Login submitted:", { email, password, rememberMe });
-    } catch (err) {
-      console.error("Login error:", err);
+      // API call here
+      // await fetch("/api/auth/login", ...)
+
+    } catch (error) {
+      console.error(error);
       setApiError("Invalid email or password. Please try again.");
     } finally {
       setIsLoading(false);
@@ -123,10 +103,17 @@ export default function LoginForm() {
         )}
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-5"
+          noValidate
+        >
           {/* Email */}
           <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-medium">
+            <label
+              htmlFor="email"
+              className="mb-2 block text-sm font-medium"
+            >
               Email
             </label>
 
@@ -135,23 +122,17 @@ export default function LoginForm() {
               type="email"
               placeholder="you@example.com"
               autoComplete="email"
-              value={email}
+              {...register("email")}
               aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? "email-error" : undefined}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
-              }}
-              className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition ${
-                errors.email
+              className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition ${errors.email
                   ? "border-red-500 focus:ring-1 focus:ring-red-500"
                   : "border-gray-300 focus:border-black focus:ring-1 focus:ring-black"
-              }`}
+                }`}
             />
 
             {errors.email && (
-              <p id="email-error" className="mt-1.5 text-xs text-red-500">
-                {errors.email}
+              <p className="mt-1.5 text-xs text-red-500">
+                {errors.email.message}
               </p>
             )}
           </div>
@@ -159,7 +140,10 @@ export default function LoginForm() {
           {/* Password */}
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <label htmlFor="password" className="text-sm font-medium">
+              <label
+                htmlFor="password"
+                className="text-sm font-medium"
+              >
                 Password
               </label>
 
@@ -177,24 +161,17 @@ export default function LoginForm() {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 autoComplete="current-password"
-                value={password}
+                {...register("password")}
                 aria-invalid={!!errors.password}
-                aria-describedby={errors.password ? "password-error" : undefined}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (errors.password)
-                    setErrors((prev) => ({ ...prev, password: "" }));
-                }}
-                className={`w-full rounded-xl border px-4 py-3 pr-16 text-sm outline-none transition ${
-                  errors.password
+                className={`w-full rounded-xl border px-4 py-3 pr-20 text-sm outline-none transition ${errors.password
                     ? "border-red-500 focus:ring-1 focus:ring-red-500"
                     : "border-gray-300 focus:border-black focus:ring-1 focus:ring-black"
-                }`}
+                  }`}
               />
 
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowPassword((prev) => !prev)}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-gray-500 hover:text-black"
               >
                 {showPassword ? "Hide" : "Show"}
@@ -202,22 +179,24 @@ export default function LoginForm() {
             </div>
 
             {errors.password && (
-              <p id="password-error" className="mt-1.5 text-xs text-red-500">
-                {errors.password}
+              <p className="mt-1.5 text-xs text-red-500">
+                {errors.password.message}
               </p>
             )}
           </div>
 
           {/* Remember Me */}
-          <label className="flex items-center gap-3 text-sm text-gray-500 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
-            />
-            Remember me
-          </label>
+          <div>
+            <label className="flex cursor-pointer items-center gap-3 text-sm text-gray-500">
+              <input
+                type="checkbox"
+                {...register("rememberMe")}
+                className="h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
+              />
+
+              <span>Remember me</span>
+            </label>
+          </div>
 
           {/* Login Button */}
           <button
@@ -232,6 +211,7 @@ export default function LoginForm() {
             )}
           </button>
         </form>
+
 
         {/* Register */}
         <p className="mt-8 text-center text-sm text-gray-500">
