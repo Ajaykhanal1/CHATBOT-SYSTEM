@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function Navbar() {
   return (
     <nav className="fixed top-0 z-50 w-full border-b bg-white/90 backdrop-blur">
@@ -27,12 +29,12 @@ export default function Navbar() {
   Get Started
 </a>
 
-          <a
+          <Link
             href="/chat"
             className="rounded-full bg-black px-5 py-2.5 text-sm text-white"
           >
             Try Now
-          </a>
+          </Link>
         </div>
       </div>
     </nav>

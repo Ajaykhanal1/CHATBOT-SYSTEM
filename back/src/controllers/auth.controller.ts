@@ -98,15 +98,15 @@ export const googleLogin = async (
 
     // Create your application JWT
     const token = jwt.sign(
-      {
-        userId: user._id.toString(),
-        role: user.role,
-      },
-      secret,
-      {
-        expiresIn: "7d",
-      }
-    );
+  {
+    id: user._id.toString(),
+    role: user.role,
+  },
+  secret,
+  {
+    expiresIn: "7d",
+  }
+);
 
     res.status(200).json({
       success: true,
@@ -234,17 +234,17 @@ export const login = async (
     }
 
     const token = jwt.sign(
-      {
-        userId: user._id.toString(),
-        role: user.role,
-        name: user.name,
-        email: user.email,
-      },
-      secret,
-      {
-        expiresIn: "7d",
-      }
-    );
+  {
+    id: user._id.toString(),
+    role: user.role,
+    name: user.name,
+    email: user.email,
+  },
+  secret,
+  {
+    expiresIn: "7d",
+  }
+);
 
     res.status(200).json({
       success: true,
