@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Message from "../models/Message";
 import Chat from "../models/Chat";
 import mongoose from "mongoose";
+import { generateAIResponse } from "../services/geminiService";
 
 export const sendMessage = async (req: Request, res: Response) => {
   try {
@@ -34,6 +35,42 @@ export const sendMessage = async (req: Request, res: Response) => {
       content: content.trim(),
     });
 
+    // Generate AI response
+
+    // Get Previous messages for Prompt
+    const previousMessages = await Message.find({
+      chatId,
+    }).sort({
+      createdAt: 1,
+    });
+
+    // Build Prompt with previous messages
+    const conversation = previousMessages
+      .map((msg) => `${msg.role}: ${msg.content}`)
+      .join("\n");
+
+    const prompt = `
+You are MyChat AI, a helpful assistant.
+
+Answer clearly and accurately.
+Give a answer in 10 work only .
+
+Conversation:
+${conversation}
+
+Assistant:
+`;
+
+// Generate AI response using Gemini API
+    const aiResponse = await generateAIResponse(prompt);
+
+    // Save AI response
+    await Message.create({
+      chatId,
+      role: "assistant",
+      content: aiResponse,
+    });
+
     // Use first message as chat title
     // First message → make chat permanent
     const update: any = {
@@ -52,6 +89,7 @@ export const sendMessage = async (req: Request, res: Response) => {
 
     res.status(201).json({
       message,
+      aiResponse,
       chat: updatedChat,
     });
   } catch (error) {
@@ -59,6 +97,7 @@ export const sendMessage = async (req: Request, res: Response) => {
 
     res.status(500).json({
       message: "Failed to send message",
+      error: error instanceof Error ? error.message : String(error)
     });
   }
 };
