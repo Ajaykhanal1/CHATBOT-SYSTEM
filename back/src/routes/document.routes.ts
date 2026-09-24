@@ -3,6 +3,7 @@ import multer from "multer";
 import fs from "fs";
 import pdfParse from "pdf-parse";
 import { chunkText } from "../services/chunkText";
+import { generateEmbedding } from "../services/embedding";
 
 const router = Router();
 
@@ -21,18 +22,23 @@ router.post("/upload", upload.single("pdf"), async (req, res) => {
     const data = await pdfParse(pdfBuffer); // Use pdf-parse to extract text from the PDF buffer
 
     const text = data.text; // Extracted text from the PDF
-    console.log(" Text Length :"+text.length);
+    console.log(" Text Length :" + text.length);
 
-    // Chuck 
+    // Chuck
     const chunks = chunkText(text);
-    console.log("Chunks Length :"+chunks.length);
-    console.log("First Chunk :"+chunks[0]);
+    console.log("Chunks Length :" + chunks.length);
+
+    // Generate embedding using ollama
+    for (const chunk of chunks) {
+      const embedding = await generateEmbedding(chunk);
+      console.log("Dimensions:", embedding.length);
+    }
 
     res.status(201).json({
       message: "PDF text extracted and chunked successfully",
       text,
       length: text.length,
-      chunks
+      chunks,
     });
   } catch (error) {
     console.error(error);
@@ -42,6 +48,5 @@ router.post("/upload", upload.single("pdf"), async (req, res) => {
     });
   }
 });
-
 
 export default router;
