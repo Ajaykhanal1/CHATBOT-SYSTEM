@@ -4,6 +4,8 @@ import fs from "fs";
 import pdfParse from "pdf-parse";
 import { chunkText } from "../services/chunkText";
 import { generateEmbedding } from "../services/embedding";
+import getQdrantClient from "../config/qdrant";
+import { randomUUID } from "crypto";
 
 const router = Router();
 
@@ -17,25 +19,39 @@ router.post("/upload", upload.single("pdf"), async (req, res) => {
       return res.status(400).json({ message: "PDF is required" });
     }
 
+    const qdrant = await getQdrantClient(); // Get Qdrant client instance
+
     const pdfBuffer = fs.readFileSync(req.file.path); // Read the uploaded PDF file into a buffer
 
     const data = await pdfParse(pdfBuffer); // Use pdf-parse to extract text from the PDF buffer
 
     const text = data.text; // Extracted text from the PDF
-    console.log(" Text Length :" + text.length);
 
-    // Chuck
+    // Chunk the text
     const chunks = chunkText(text);
-    console.log("Chunks Length :" + chunks.length);
 
-    // Generate embedding using ollama
-    for (const chunk of chunks) {
+    for (const [index, chunk] of chunks.entries()) {
       const embedding = await generateEmbedding(chunk);
-      console.log("Dimensions:", embedding.length);
+
+      await qdrant.upsert("chatbot_documents", {
+        wait: true,
+        points: [
+          {
+            id: randomUUID(),
+            vector: embedding,
+            payload: {
+              documentId: req.file.filename,
+              fileName: req.file.originalname,
+              chunkIndex: index,
+              text: chunk,
+            },
+          },
+        ],
+      });
     }
 
     res.status(201).json({
-      message: "PDF text extracted and chunked successfully",
+      message: "PDF Uploaded and processed successfully",
       text,
       length: text.length,
       chunks,
