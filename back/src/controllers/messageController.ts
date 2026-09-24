@@ -3,6 +3,7 @@ import Message from "../models/Message";
 import Chat from "../models/Chat";
 import mongoose from "mongoose";
 import { generateAIResponse } from "../services/geminiService";
+import searchQdrant from "../services/searchQdrant";
 
 export const sendMessage = async (req: Request, res: Response) => {
   try {
@@ -44,6 +45,12 @@ export const sendMessage = async (req: Request, res: Response) => {
       createdAt: 1,
     });
 
+    const results = await searchQdrant(content.trim());
+    const chunks = results.points
+      .map((point) => point.payload?.text)
+      .filter(Boolean);
+    const context = chunks.join("\n\n");
+
     // Build Prompt with previous messages
     const conversation = previousMessages
       .map((msg) => `${msg.role}: ${msg.content}`)
@@ -53,15 +60,22 @@ export const sendMessage = async (req: Request, res: Response) => {
 You are MyChat AI, a helpful assistant.
 
 Answer clearly and accurately.
-Give a answer in 10 work only .
+If the answer is not available in the context, say:
+"I don't have enough information to answer this."
 
-Conversation:
+CONTEXT:
+${context}
+
+CONVERSATION:
 ${conversation}
 
-Assistant:
+QUESTION:
+${content.trim()}
+
+Answer:
 `;
 
-// Generate AI response using Gemini API
+    // Generate AI response using Gemini API
     const aiResponse = await generateAIResponse(prompt);
 
     // Save AI response
@@ -97,7 +111,7 @@ Assistant:
 
     res.status(500).json({
       message: "Failed to send message",
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 };
