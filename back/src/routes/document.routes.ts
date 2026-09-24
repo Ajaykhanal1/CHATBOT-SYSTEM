@@ -2,6 +2,7 @@ import { Router } from "express";
 import multer from "multer";
 import fs from "fs";
 import pdfParse from "pdf-parse";
+import { chunkText } from "../services/chunkText";
 
 const router = Router();
 
@@ -22,10 +23,16 @@ router.post("/upload", upload.single("pdf"), async (req, res) => {
     const text = data.text; // Extracted text from the PDF
     console.log(" Text Length :"+text.length);
 
+    // Chuck 
+    const chunks = chunkText(text);
+    console.log("Chunks Length :"+chunks.length);
+    console.log("First Chunk :"+chunks[0]);
+
     res.status(201).json({
-      message: "PDF text extracted successfully",
+      message: "PDF text extracted and chunked successfully",
       text,
       length: text.length,
+      chunks
     });
   } catch (error) {
     console.error(error);
