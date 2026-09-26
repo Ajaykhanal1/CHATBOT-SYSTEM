@@ -46,5 +46,9 @@ app.use("/admin/teachers", teacherRoutes);
 app.use("/admin/attendance", attendanceRoutes);
 app.use("/admin/notices", noticeRoutes);
 
+import collegeQueryRoutes from "./routes/collegeQueryRoutes";
+
+app.use("/api/college", collegeQueryRoutes);
+
 
 export default app;
