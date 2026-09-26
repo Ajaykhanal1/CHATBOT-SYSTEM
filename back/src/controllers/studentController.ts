@@ -26,10 +26,17 @@ export const getStudents = async (
   res: Response
 ) => {
   try {
-    const students = await Student.find().populate("courses");
+    const students = await Student.find().populate({
+      path: "courses",
+      populate: {
+        path: "teacher",
+      },
+    });
 
     res.json(students);
   } catch (error) {
+    console.error("Get students error:", error);
+
     res.status(500).json({
       message: "Failed to fetch students",
     });
