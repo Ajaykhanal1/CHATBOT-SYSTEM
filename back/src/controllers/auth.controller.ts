@@ -5,18 +5,20 @@ import { ZodError } from "zod";
 import { OAuth2Client } from "google-auth-library";
 
 import { User } from "../models/user.model";
-import { registerSchema, loginSchema, forgotPasswordSchema } from "../validators/auth.validator";
+import {
+  registerSchema,
+  loginSchema,
+  forgotPasswordSchema,
+} from "../validators/auth.validator";
 
 import crypto from "crypto";
 import { sendResetEmail } from "../config/mailer";
 
-const googleClient = new OAuth2Client(
-  process.env.GOOGLE_CLIENT_ID
-);
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const googleLogin = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { credential } = req.body;
@@ -36,7 +38,7 @@ export const googleLogin = async (
         headers: {
           Authorization: `Bearer ${credential}`,
         },
-      }
+      },
     );
 
     if (!googleResponse.ok) {
@@ -49,12 +51,7 @@ export const googleLogin = async (
 
     const googleUser = await googleResponse.json();
 
-    const {
-      sub: googleId,
-      email,
-      name,
-      email_verified,
-    } = googleUser;
+    const { sub: googleId, email, name, email_verified } = googleUser;
 
     if (!email || !email_verified) {
       res.status(401).json({
@@ -66,10 +63,7 @@ export const googleLogin = async (
 
     // Find existing user
     let user = await User.findOne({
-      $or: [
-        { googleId },
-        { email: email.toLowerCase() },
-      ],
+      $or: [{ googleId }, { email: email.toLowerCase() }],
     });
 
     // Create new user
@@ -98,15 +92,15 @@ export const googleLogin = async (
 
     // Create your application JWT
     const token = jwt.sign(
-  {
-    id: user._id.toString(),
-    role: user.role,
-  },
-  secret,
-  {
-    expiresIn: "7d",
-  }
-);
+      {
+        id: user._id.toString(),
+        role: user.role,
+      },
+      secret,
+      {
+        expiresIn: "7d",
+      },
+    );
 
     res.status(200).json({
       success: true,
@@ -129,10 +123,7 @@ export const googleLogin = async (
   }
 };
 
-export const register = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     // Validate request body
     const data = registerSchema.parse(req.body);
@@ -192,10 +183,7 @@ export const register = async (
   }
 };
 
-export const login = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const data = loginSchema.parse(req.body);
 
@@ -213,10 +201,7 @@ export const login = async (
     }
 
     // Compare password
-    const passwordMatch = await bcrypt.compare(
-      data.password,
-      user.password
-    );
+    const passwordMatch = await bcrypt.compare(data.password, user.password);
 
     if (!passwordMatch) {
       res.status(401).json({
@@ -234,17 +219,17 @@ export const login = async (
     }
 
     const token = jwt.sign(
-  {
-    id: user._id.toString(),
-    role: user.role,
-    name: user.name,
-    email: user.email,
-  },
-  secret,
-  {
-    expiresIn: "7d",
-  }
-);
+      {
+        id: user._id.toString(),
+        role: user.role,
+        name: user.name,
+        email: user.email,
+      },
+      secret,
+      {
+        expiresIn: "7d",
+      },
+    );
 
     res.status(200).json({
       success: true,
@@ -277,7 +262,7 @@ export const login = async (
 
 export const forgotPassword = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const data = forgotPasswordSchema.parse(req.body);
@@ -305,14 +290,11 @@ export const forgotPassword = async (
 
     user.resetPasswordToken = hashedToken;
 
-    user.resetPasswordExpires = new Date(
-      Date.now() + 15 * 60 * 1000
-    );
+    user.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
 
     await user.save();
 
-    const resetLink =
-      `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
+    const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
 
     await sendResetEmail(user.email, resetLink);
 
@@ -341,7 +323,7 @@ export const forgotPassword = async (
 
 export const resetPassword = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { token, password } = req.body;
@@ -354,10 +336,7 @@ export const resetPassword = async (
       return;
     }
 
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(token)
-      .digest("hex");
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
     const user = await User.findOne({
       resetPasswordToken: hashedToken,

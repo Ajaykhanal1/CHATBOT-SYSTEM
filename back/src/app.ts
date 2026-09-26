@@ -10,6 +10,8 @@ import courseRoutes from "./routes/courseRoutes";
 import teacherRoutes from "./routes/teacherRoutes";
 import attendanceRoutes from "./routes/attendanceRoutes";
 import noticeRoutes from "./routes/noticeRoutes";
+import collegeQueryRoutes from "./routes/collegeQueryRoutes";
+import userRoutes from "./routes/userRoutes";
 
 
 
@@ -46,9 +48,9 @@ app.use("/admin/teachers", teacherRoutes);
 app.use("/admin/attendance", attendanceRoutes);
 app.use("/admin/notices", noticeRoutes);
 
-import collegeQueryRoutes from "./routes/collegeQueryRoutes";
-
 app.use("/api/college", collegeQueryRoutes);
+app.use("/admin/users", userRoutes);
+
 
 
 export default app;
