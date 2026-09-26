@@ -2,8 +2,8 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface IAttendance extends Document {
   student: mongoose.Types.ObjectId;
-  course: mongoose.Types.ObjectId;
-  percentage: number;
+  semester: number;
+  attendance_percentage: number;
 }
 
 const attendanceSchema = new Schema<IAttendance>(
@@ -13,12 +13,15 @@ const attendanceSchema = new Schema<IAttendance>(
       ref: "Student",
       required: true,
     },
-    course: {
-      type: Schema.Types.ObjectId,
-      ref: "Course",
+
+    semester: {
+      type: Number,
       required: true,
+      min: 1,
+      max: 8,
     },
-    percentage: {
+
+    attendance_percentage: {
       type: Number,
       required: true,
       min: 0,

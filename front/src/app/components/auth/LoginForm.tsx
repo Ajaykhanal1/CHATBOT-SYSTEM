@@ -18,7 +18,7 @@ export default function LoginForm() {
   const [apiError, setApiError] = useState("");
   const router = useRouter();
 
-    const setUser = useAuthStore((state) => state.setUser);
+  const setUser = useAuthStore((state) => state.setUser);
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -36,11 +36,14 @@ export default function LoginForm() {
         // Save login information
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
-        
+
         setUser(user);
 
-        // Go to chat
-        router.push("/chat");
+        if (user.role === "admin") {
+          router.push("/admin_pages/dashboard");
+        } else {
+          router.push("/chat");
+        }
       } catch (error: unknown) {
         console.error("Google login error:", error);
 
@@ -91,7 +94,12 @@ export default function LoginForm() {
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
 
-      router.push("/chat");
+      if (user.role === "admin") {
+        router.push("/admin_pages/dashboard");
+      } else {
+        router.push("/chat");
+      }
+      
     } catch (error: unknown) {
       console.error("Login error:", error);
 
