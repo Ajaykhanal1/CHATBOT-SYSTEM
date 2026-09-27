@@ -95,6 +95,7 @@ export const googleLogin = async (
       {
         id: user._id.toString(),
         role: user.role,
+        email:user.email
       },
       secret,
       {

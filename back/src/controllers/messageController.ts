@@ -4,10 +4,13 @@ import Chat from "../models/Chat";
 import mongoose from "mongoose";
 import { generateAIResponse } from "../services/geminiService";
 import searchQdrant from "../services/searchQdrant";
+import { getStudentData } from "../services/structuredDataService";
 
 export const sendMessage = async (req: Request, res: Response) => {
   try {
     const { content } = req.body;
+    const studentData = await getStudentData(req.user.email);
+    console.log("STRUCTURED DATA:", studentData);
 
     if (!content?.trim()) {
       return res.status(400).json({
@@ -79,8 +82,16 @@ RULES:
 - Do not say that you are searching a database.
 - Use Markdown when it improves readability.
 - Give the answer directly without unnecessary filler.
+- Use STRUCTURED DATA for student information such as name, semester, GPA, marks, and attendance.
+- Use DOCUMENT CONTEXT for information retrieved from college documents.
+- Never invent structured data.
 
-CONTEXT:
+STRUCTURED DATA:
+
+${JSON.stringify(studentData, null, 2)}
+
+DOCUMENT CONTEXT:
+
 ${context}
 
 CONVERSATION:

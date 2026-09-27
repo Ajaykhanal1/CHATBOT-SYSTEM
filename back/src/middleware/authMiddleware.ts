@@ -21,11 +21,13 @@ export const authMiddleware = (
     ) as {
       id: string;
       role: string;
+      email:string;
     };
 
     req.user = {
       id: decoded.id,
       role: decoded.role,
+      email:decoded.email,
     };
 
     next();
