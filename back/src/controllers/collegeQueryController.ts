@@ -1,5 +1,12 @@
 import { Request, Response } from "express";
-import { getStudentByName } from "../services/collegeQueryService";
+
+import {
+  getStudentByName,
+  getStudentCountBySemester,
+  getStudentsBySemester,
+  getTotalStudentCount,
+} from "../services/collegeQueryService";
+
 import {
   detectQuestionType,
   extractStudentName,
@@ -35,11 +42,78 @@ export const testQuestion = async (
       const type = detectQuestionType(question);
       const studentName = extractStudentName(question);
 
+      const lowerQuestion = question.toLowerCase();
+
+      // --------------------------------
+      // GENERAL COLLEGE QUESTIONS
+      // --------------------------------
+
+      // How many students are there?
+      if (
+        lowerQuestion.includes("how many students") &&
+        !lowerQuestion.includes("semester")
+      ) {
+        const count = await getTotalStudentCount();
+
+        answers.push({
+          question,
+          answer: `There are ${count} students in total.`,
+        });
+
+        continue;
+      }
+
+      // How many students are in semester 2?
+      const semesterMatch = lowerQuestion.match(/semester\s*(\d+)/);
+
+      if (
+        lowerQuestion.includes("how many students") &&
+        semesterMatch
+      ) {
+        const semester = Number(semesterMatch[1]);
+
+        const count = await getStudentCountBySemester(semester);
+
+        answers.push({
+          question,
+          answer: `There are ${count} students in semester ${semester}.`,
+        });
+
+        continue;
+      }
+
+      // Show/List students in semester 2
+      if (
+        semesterMatch &&
+        lowerQuestion.includes("student") &&
+        (
+          lowerQuestion.includes("show") ||
+          lowerQuestion.includes("list") ||
+          lowerQuestion.includes("who")
+        )
+      ) {
+        const semester = Number(semesterMatch[1]);
+
+        const students = await getStudentsBySemester(semester);
+
+        answers.push({
+          question,
+          answer: students,
+        });
+
+        continue;
+      }
+
+      // --------------------------------
+      // STUDENT-SPECIFIC QUESTIONS
+      // --------------------------------
+
       if (!studentName) {
         answers.push({
           question,
           answer: "Student name not found",
         });
+
         continue;
       }
 
@@ -50,17 +124,21 @@ export const testQuestion = async (
           question,
           answer: "Student not found",
         });
+
         continue;
       }
 
+      // GPA
       if (type === "gpa") {
         answers.push({
           question,
           answer: `${result.student.name}'s GPA is ${result.student.gpa}.`,
         });
+
         continue;
       }
 
+      // Attendance
       if (type === "attendance") {
         answers.push({
           question,
@@ -69,9 +147,11 @@ export const testQuestion = async (
             attendance_percentage: item.attendance_percentage,
           })),
         });
+
         continue;
       }
 
+      // Courses
       if (type === "courses") {
         answers.push({
           question,
@@ -82,9 +162,11 @@ export const testQuestion = async (
             faculty: course.faculty,
           })),
         });
+
         continue;
       }
 
+      // Teachers
       if (type === "teacher") {
         answers.push({
           question,
@@ -98,9 +180,11 @@ export const testQuestion = async (
               : null,
           })),
         });
+
         continue;
       }
 
+      // Student information
       if (type === "student") {
         answers.push({
           question,
@@ -112,6 +196,7 @@ export const testQuestion = async (
             gpa: result.student.gpa,
           },
         });
+
         continue;
       }
 
