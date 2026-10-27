@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/axios/axios";
+import { getSocket } from "@/lib/socket";
 
 type Message = {
   _id: string;
@@ -11,44 +12,124 @@ type Message = {
 
 export default function ChatMessages({ chatId }: { chatId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const currentChatIdRef = useRef(chatId);
 
   useEffect(() => {
-    api.get(`/messages/${chatId}`).then((res) => {
-      setMessages(res.data);
-    });
+    currentChatIdRef.current = chatId;
+    setMessages([]);
+    setLoading(true);
   }, [chatId]);
 
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get(`/messages/${chatId}`);
+        if (currentChatIdRef.current !== chatId) return;
+        const data = Array.isArray(res.data) ? res.data : [];
+        const map = new Map<string, Message>();
+        for (let i = 0; i < data.length; i++) {
+          const m: any = data[i];
+          if (!m || !m._id) continue;
+          if (!map.has(m._id)) {
+            map.set(m._id, m);
+          }
+        }
+        if (currentChatIdRef.current !== chatId) return;
+        setMessages(Array.from(map.values()));
+      } catch (error) {
+        console.error("Failed to load messages", error);
+      } finally {
+        if (currentChatIdRef.current === chatId) {
+          setLoading(false);
+        }
+      }
+    };
+
+    if (chatId) fetchMessages();
+  }, [chatId]);
+
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket || !chatId) return;
+
+    socket.emit("chat:join", { chatId });
+
+    const handler = (payload: any) => {
+      if (payload?.chatId !== currentChatIdRef.current) return;
+      if (payload?.chatId !== chatId) return;
+      setMessages((prev) => {
+        const next = [...prev];
+        const add = (m: any) => {
+          if (!m || !m._id) return;
+          for (let i = 0; i < next.length; i++) {
+            if (next[i]._id === m._id) return;
+          }
+          next.push(m);
+        };
+        add(payload.userMessage);
+        add(payload.aiMessage);
+        return next;
+      });
+    };
+
+    socket.on("message:new", handler);
+
+    return () => {
+      socket.off("message:new", handler);
+    };
+  }, [chatId]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
+          <span>Loading conversation...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="mx-auto max-w-3xl px-4 py-8">
-        {messages.map((message) => (
-          <div
-            key={message._id}
-            className={`mb-8 flex gap-4 ${
-              message.role === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
-                message.role === "user"
-                  ? "bg-gray-200"
-                  : "bg-black text-white"
-              }`}
-            >
-              {message.role === "user" ? "A" : "AI"}
-            </div>
-
-            <div className="min-w-0 pt-1">
-              <p className="mb-1 text-sm font-semibold">
-                {message.role === "user" ? "You" : "AI"}
-              </p>
-
-              <p className="whitespace-pre-wrap leading-7 text-gray-700">
-                {message.content}
-              </p>
+    <div className="flex-1 overflow-y-auto px-4 py-6">
+      <div className="mx-auto max-w-3xl space-y-6">
+        {(() => {
+          const seen = new Set<string>();
+          const unique = messages.filter((m) => {
+            if (!m?._id) return false;
+            if (seen.has(m._id)) return false;
+            seen.add(m._id);
+            return true;
+          });
+          return unique.map((message, idx) => (
+          <div key={`${message._id}-${idx}`} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+            <div className="flex max-w-[85%] items-start gap-3">
+              {message.role === "assistant" && (
+                <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-xs text-primary-foreground">
+                  AI
+                </div>
+              )}
+              <div
+                className={`relative overflow-hidden rounded-3xl px-6 py-4 ${
+                  message.role === "user"
+                    ? "bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg shadow-primary/20"
+                    : "border border-white/10 bg-gradient-to-b from-white/10 to-white/5 text-foreground backdrop-blur"
+                }`}
+              >
+                <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
+              </div>
             </div>
           </div>
-        ))}
+          ));
+        })()}
+        <div ref={bottomRef} />
       </div>
     </div>
   );

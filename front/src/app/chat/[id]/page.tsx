@@ -7,7 +7,7 @@ export default function ChatIdRoute() {
   const { id } = useParams<{ id: string }>();
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-background text-foreground">
       <ChatPage chatId={id} />
     </main>
   );

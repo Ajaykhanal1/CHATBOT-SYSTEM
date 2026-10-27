@@ -6,6 +6,7 @@ import { generateAIResponse } from "../services/geminiService";
 import searchQdrant from "../services/searchQdrant";
 import { getStudentData } from "../services/structuredDataService";
 import { parseQuestion } from "../services/questionParser";
+import { getIO } from "../socket";
 
 import {
   getStudentCountBySemester,
@@ -244,7 +245,7 @@ Answer naturally:
     const aiResponse = await generateAIResponse(prompt);
 
     // Save AI response
-    await Message.create({
+    const aiMessage = await Message.create({
       chatId,
       role: "assistant",
       content: aiResponse,
@@ -265,6 +266,18 @@ Answer naturally:
     const updatedChat = await Chat.findOneAndUpdate({ _id: chat._id }, update, {
       new: true,
     });
+
+    try {
+      const io = getIO();
+      io.to(`chat:${chatId.toString()}`).emit("message:new", {
+        chatId: chatId.toString(),
+        userMessage: message,
+        aiMessage,
+        chat: updatedChat,
+      });
+    } catch (e) {
+      console.error("SOCKET EMIT ERROR:", e);
+    }
 
     res.status(201).json({
       message,
