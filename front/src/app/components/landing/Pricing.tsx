@@ -2,119 +2,87 @@ const plans = [
   {
     name: "Free",
     price: "$0",
-    description: "For trying out the AI platform.",
-    features: [
-      "Basic AI conversations",
-      "Limited messages",
-      "Chat history",
-      "Basic models",
-    ],
+    period: "",
+    description: "For trying out the platform.",
+    features: ["Basic AI conversations", "Limited messages", "Chat history", "Basic models"],
     button: "Get Started",
+    popular: false,
   },
   {
     name: "Pro",
     price: "$19",
+    period: "/ month",
     description: "For students, developers and professionals.",
-    features: [
-      "More AI messages",
-      "Advanced AI models",
-      "Document uploads",
-      "Image generation",
-      "Web search",
-      "Priority access",
-    ],
+    features: ["More AI messages", "Advanced AI models", "Document uploads", "Image generation", "Web search", "Priority access"],
     button: "Start Pro",
     popular: true,
   },
   {
     name: "Business",
     price: "$49",
+    period: "/ month",
     description: "For teams building with AI.",
-    features: [
-      "Everything in Pro",
-      "Higher usage limits",
-      "Team workspace",
-      "Advanced administration",
-      "Priority support",
-      "API access",
-    ],
+    features: ["Everything in Pro", "Higher usage limits", "Team workspace", "Advanced administration", "Priority support", "API access"],
     button: "Choose Business",
+    popular: false,
   },
 ];
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="bg-gray-50 px-6 py-24">
-      <div className="mx-auto max-w-7xl">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-gray-500">
-            Pricing
-          </p>
-
-          <h2 className="mt-3 text-4xl font-bold md:text-5xl">
-            Simple pricing
+    <section id="pricing" className="relative px-6 py-20">
+      <div className="mx-auto max-w-6xl">
+        <div className="text-center">
+          <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-muted-foreground">
+            Simple, transparent pricing
+          </span>
+          <h2 className="mt-6 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
+            Choose the plan that fits you
           </h2>
-
-          <p className="mt-5 text-gray-600">
-            Choose a plan that fits the way you use AI.
+          <p className="mx-auto mt-4 max-w-2xl text-balance text-lg text-muted-foreground">
+            Start free, upgrade when you need more power and capacity.
           </p>
         </div>
 
-        <div className="mt-16 grid gap-6 lg:grid-cols-3">
+        <div className="mt-12 grid gap-4 lg:grid-cols-3">
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`relative rounded-3xl border bg-white p-8 ${
+              className={`relative overflow-hidden rounded-3xl border backdrop-blur transition-all hover:-translate-y-1 ${
                 plan.popular
-                  ? "border-black shadow-xl"
-                  : "border-gray-200"
+                  ? "border-primary/60 bg-gradient-to-b from-primary/20 via-white/10 to-white/5 shadow-xl shadow-primary/20"
+                  : "border-white/10 bg-gradient-to-b from-white/10 to-white/5"
               }`}
             >
               {plan.popular && (
-                <span className="absolute right-6 top-6 rounded-full bg-black px-3 py-1 text-xs text-white">
-                  Popular
-                </span>
+                <div className="absolute right-6 top-6 rounded-full bg-gradient-to-r from-primary to-accent px-3 py-1 text-xs font-medium text-primary-foreground">
+                  Most popular
+                </div>
               )}
-
-              <h3 className="text-xl font-semibold">{plan.name}</h3>
-
-              <p className="mt-3 text-sm text-gray-500">
-                {plan.description}
-              </p>
-
-              <div className="mt-7">
-                <span className="text-5xl font-bold">
-                  {plan.price}
-                </span>
-
-                {plan.price !== "$0" && (
-                  <span className="text-gray-500"> / month</span>
-                )}
-              </div>
-
-              <button
-                className={`mt-8 w-full rounded-full px-5 py-3 font-medium ${
-                  plan.popular
-                    ? "bg-black text-white"
-                    : "border border-gray-300 bg-white"
-                }`}
-              >
-                {plan.button}
-              </button>
-
-              <div className="mt-8 border-t pt-7">
-                <p className="mb-4 text-sm font-semibold">
-                  What included:
-                </p>
-
-                <ul className="space-y-3">
+              <div className="p-8">
+                <h3 className="text-lg font-semibold">{plan.name}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{plan.description}</p>
+                <div className="mt-6 flex items-end gap-2">
+                  <span className="text-5xl font-semibold tracking-tight">{plan.price}</span>
+                  {plan.period && <span className="mb-2 text-sm text-muted-foreground">{plan.period}</span>}
+                </div>
+                <a
+                  href="/register"
+                  className={`mt-8 inline-flex w-full items-center justify-center rounded-full px-6 py-3 text-sm font-medium transition-all ${
+                    plan.popular
+                      ? "bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-primary/40"
+                      : "border border-white/10 bg-white/5 text-foreground hover:border-white/20 hover:bg-white/10"
+                  }`}
+                >
+                  {plan.button}
+                </a>
+                <ul className="mt-8 space-y-3 text-sm text-muted-foreground">
                   {plan.features.map((feature) => (
-                    <li
-                      key={feature}
-                      className="flex gap-3 text-sm text-gray-600"
-                    >
-                      <span className="text-black">✓</span>
-                      {feature}
+                    <li key={feature} className="flex items-center gap-3">
+                      <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-r from-primary/80 to-accent/80 text-[10px] text-primary-foreground">
+                        ✓
+                      </span>
+                      <span>{feature}</span>
                     </li>
                   ))}
                 </ul>

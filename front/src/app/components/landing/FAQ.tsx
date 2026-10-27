@@ -4,29 +4,29 @@ import { useState } from "react";
 
 const faqs = [
   {
-    question: "What is this AI chatbot?",
+    question: "What is MyChat?",
     answer:
-      "It is an AI platform where users can chat with AI models, upload documents, search the web and use other AI-powered features.",
+      "MyChat is an all-in-one AI platform that gives you access to multiple leading AI models from a single, clean interface.",
   },
   {
     question: "Can I upload PDF documents?",
     answer:
-      "Yes. Users can upload supported documents and ask questions based on the document content.",
+      "Yes. You can upload PDFs and other documents to chat with them, summarize content, or ask specific questions.",
   },
   {
     question: "Can I use multiple AI models?",
     answer:
-      "Yes. The application can provide a model selector so users can choose between different AI models.",
+      "Absolutely. Switch between GPT, Claude, Gemini, DeepSeek and more without leaving your conversation.",
   },
   {
     question: "Is my chat history saved?",
     answer:
-      "Yes. Authenticated users can have their conversations stored and access them later.",
+      "Yes. Your conversations are saved to your account so you can resume them anytime across devices.",
   },
   {
     question: "Can I use this on mobile?",
     answer:
-      "Yes. The interface is designed to be responsive and can work on desktop, tablet and mobile devices.",
+      "Yes. MyChat is fully responsive and works great on phones, tablets and desktop.",
   },
 ];
 
@@ -34,43 +34,43 @@ export default function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section className="px-6 py-24">
-      <div className="mx-auto max-w-3xl">
+    <section id="faq" className="relative px-6 py-20">
+      <div className="mx-auto max-w-4xl">
         <div className="text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-gray-500">
-            FAQ
-          </p>
-
-          <h2 className="mt-3 text-4xl font-bold md:text-5xl">
+          <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-muted-foreground">
+            FAQs
+          </span>
+          <h2 className="mt-6 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
             Frequently asked questions
           </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-balance text-lg text-muted-foreground">
+            Everything you need to know about getting started with MyChat.
+          </p>
         </div>
 
-        <div className="mt-12 divide-y rounded-3xl border border-gray-200">
+        <div className="mt-12 space-y-3">
           {faqs.map((faq, index) => {
             const isOpen = open === index;
-
             return (
-              <div key={faq.question} className="px-6">
+              <div
+                key={faq.question}
+                className={`overflow-hidden rounded-3xl border backdrop-blur transition-all ${
+                  isOpen ? "border-white/20 bg-gradient-to-b from-white/10 to-white/5" : "border-white/10 bg-gradient-to-b from-white/10 to-white/5"
+                }`}
+              >
                 <button
-                  onClick={() =>
-                    setOpen(isOpen ? null : index)
-                  }
-                  className="flex w-full items-center justify-between py-6 text-left"
+                  onClick={() => setOpen(isOpen ? null : index)}
+                  className="flex w-full items-center justify-between gap-4 p-6 text-left"
                 >
-                  <span className="font-medium">
-                    {faq.question}
-                  </span>
-
-                  <span className="ml-4 text-xl">
+                  <span className="text-base font-medium">{faq.question}</span>
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-lg transition-transform group-open:rotate-45">
                     {isOpen ? "−" : "+"}
                   </span>
                 </button>
-
                 {isOpen && (
-                  <p className="pb-6 pr-8 leading-7 text-gray-500">
-                    {faq.answer}
-                  </p>
+                  <div className="px-6 pb-6 text-sm text-muted-foreground">
+                    <p>{faq.answer}</p>
+                  </div>
                 )}
               </div>
             );

@@ -9,7 +9,9 @@ import Footer from "./components/landing/Footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white text-black">
+    <main className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[880px] bg-noise" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[880px] bg-grid opacity-40" />
       <Navbar />
       <Hero />
       <Models />

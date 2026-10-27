@@ -1,62 +1,65 @@
 const models = [
   {
     name: "GPT",
-    description: "General purpose AI",
+    description: "General purpose reasoning and conversation",
+    gradient: "from-violet-400/80 to-fuchsia-400/80",
   },
   {
     name: "Claude",
-    description: "Writing and reasoning",
+    description: "Exceptional writing, analysis and long context",
+    gradient: "from-sky-400/80 to-cyan-400/80",
   },
   {
     name: "Gemini",
-    description: "Multimodal AI",
+    description: "Multimodal understanding across text, image and video",
+    gradient: "from-emerald-400/80 to-teal-400/80",
   },
   {
     name: "DeepSeek",
-    description: "Coding and reasoning",
+    description: "Advanced coding, math and technical reasoning",
+    gradient: "from-amber-300/80 to-orange-400/80",
   },
 ];
 
 export default function Models() {
   return (
-    <section id="models" className="px-6 py-24">
-      <div className="mx-auto max-w-7xl">
-
-        <div className="mb-12 text-center">
-          <p className="text-sm font-semibold uppercase">
-            AI Models
-          </p>
-
-          <h2 className="mt-3 text-4xl font-bold">
-            One interface. Multiple AI models.
+    <section id="models" className="relative px-6 py-20">
+      <div className="mx-auto max-w-6xl">
+        <div className="text-center">
+          <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-muted-foreground">
+            Unified Model Access
+          </span>
+          <h2 className="mt-6 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
+            One interface. Every leading model.
           </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-balance text-lg text-muted-foreground">
+            Switch between top-tier models on the fly to match the task at hand.
+          </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-4">
+        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {models.map((model) => (
-            <div
+            <a
               key={model.name}
-              className="rounded-3xl border p-6 transition hover:-translate-y-1 hover:shadow-xl"
+              href="/chat"
+              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 backdrop-blur transition-all hover:-translate-y-1 hover:border-white/20 hover:shadow-xl hover:shadow-primary/10"
             >
-              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-black text-white">
-                AI
+              <div
+                className="absolute -right-10 -top-10 h-24 w-24 rounded-full bg-gradient-to-br opacity-30 blur-3xl transition-opacity group-hover:opacity-60"
+                style={{ backgroundImage: "linear-gradient(135deg, var(--tw-gradient-stops))" }}
+              />
+              <div className={`relative mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${model.gradient}`}>
+                <span className="text-sm font-semibold">AI</span>
               </div>
-
-              <h3 className="text-xl font-semibold">
-                {model.name}
-              </h3>
-
-              <p className="mt-2 text-gray-500">
-                {model.description}
-              </p>
-
-              <button className="mt-6 text-sm font-medium">
-                Try model →
-              </button>
-            </div>
+              <h3 className="relative text-xl font-semibold">{model.name}</h3>
+              <p className="relative mt-2 text-sm text-muted-foreground">{model.description}</p>
+              <div className="relative mt-6 inline-flex items-center gap-2 text-sm text-foreground">
+                Try model
+                <span className="transition-transform group-hover:translate-x-1">→</span>
+              </div>
+            </a>
           ))}
         </div>
-
       </div>
     </section>
   );

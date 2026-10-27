@@ -1,83 +1,98 @@
 const features = [
   {
-    icon: "✦",
     title: "Multiple AI Models",
-    description:
-      "Use different AI models from one simple and powerful interface.",
+    description: "Access GPT, Claude, Gemini, DeepSeek and more from one unified workspace.",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M10 3v14M3 10h14" stroke="currentColor" strokeWidth="1.2" />
+      </svg>
+    ),
   },
   {
-    icon: "⌕",
     title: "Web Search",
-    description:
-      "Search the web and get useful information directly inside your conversation.",
+    description: "Get real-time answers with grounded web search built directly into chat.",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+    ),
   },
   {
-    icon: "◫",
     title: "Chat with Documents",
-    description:
-      "Upload PDF and other documents and ask questions about their content.",
+    description: "Upload PDFs, TXT, DOCX and more to summarize, analyze or ask anything.",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <rect x="5" y="4" width="10" height="12" rx="2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M8 7h4M8 10h4M8 13h2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+    ),
   },
   {
-    icon: "◉",
     title: "Image Generation",
-    description:
-      "Create beautiful AI-generated images from simple text prompts.",
+    description: "Create stunning visuals from text with state-of-the-art image models.",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <rect x="4" y="5" width="12" height="10" rx="2" stroke="currentColor" strokeWidth="1.2" />
+        <circle cx="8" cy="9" r="1" fill="currentColor" />
+        <path d="M4 13l3-3 2 2 4-4 3 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
   },
   {
-    icon: "◌",
     title: "Voice Chat",
-    description:
-      "Interact with your AI assistant using voice conversations.",
+    description: "Speak naturally and get fluid, human-like responses in real time.",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <rect x="9" y="3" width="2" height="8" rx="1" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M6 9a4 4 0 008 0M10 13v4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+    ),
   },
   {
-    icon: "↺",
-    title: "Chat History",
-    description:
-      "Your conversations are organized so you can continue them anytime.",
+    title: "Smart Chat History",
+    description: "Organized, searchable conversations so you can pick up exactly where you left off.",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M10 6v4l2.5 2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
   },
 ];
 
 export default function Features() {
   return (
-    <section id="features" className="px-6 py-24">
-      <div className="mx-auto max-w-7xl">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-gray-500">
-            Features
-          </p>
-
-          <h2 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
-            Everything you need
-            <br />
-            in one AI platform
+    <section id="features" className="relative px-6 py-20">
+      <div className="mx-auto max-w-6xl">
+        <div className="text-center">
+          <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-muted-foreground">
+            Everything in one place
+          </span>
+          <h2 className="mt-6 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
+            Powerful tools to accelerate your work
           </h2>
-
-          <p className="mt-5 text-gray-600">
-            Powerful AI tools designed to make your everyday work,
-            learning and creativity easier.
+          <p className="mx-auto mt-4 max-w-2xl text-balance text-lg text-muted-foreground">
+            From research to creation, MyChat gives you the right model and tools for every task.
           </p>
         </div>
 
-        <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="group rounded-3xl border border-gray-200 bg-white p-7 transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 backdrop-blur transition-all hover:-translate-y-1 hover:border-white/20"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-black text-xl text-white">
+              <div className="absolute -right-12 -top-12 h-28 w-28 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 blur-3xl" />
+              <div className="relative mb-5 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-foreground">
                 {feature.icon}
               </div>
-
-              <h3 className="mt-6 text-xl font-semibold">
-                {feature.title}
-              </h3>
-
-              <p className="mt-3 leading-7 text-gray-500">
-                {feature.description}
-              </p>
-
-              <div className="mt-6 text-sm font-medium">
-                Learn more →
+              <h3 className="relative text-lg font-semibold">{feature.title}</h3>
+              <p className="relative mt-2 text-sm text-muted-foreground">{feature.description}</p>
+              <div className="relative mt-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors group-hover:text-foreground">
+                Learn more
+                <span className="transition-transform group-hover:translate-x-1">→</span>
               </div>
             </div>
           ))}
