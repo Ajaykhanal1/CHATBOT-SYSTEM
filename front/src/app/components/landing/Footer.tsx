@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="relative border-t border-white/5 px-6 py-12">
@@ -41,24 +43,24 @@ export default function Footer() {
             <h4 className="text-sm font-semibold">Company</h4>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
               <li>
-                <a href="#contact" className="transition-colors hover:text-foreground">
+                <Link href="/contact" className="transition-colors hover:text-foreground">
                   Contact
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="transition-colors hover:text-foreground">
+                <Link href="/about" className="transition-colors hover:text-foreground">
                   About
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="transition-colors hover:text-foreground">
+                <Link href="/privacy" className="transition-colors hover:text-foreground">
                   Privacy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="transition-colors hover:text-foreground">
+                <Link href="/terms" className="transition-colors hover:text-foreground">
                   Terms
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -66,15 +68,15 @@ export default function Footer() {
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-6 text-center text-sm text-muted-foreground sm:flex-row">
           <p>© 2026 MyChat. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <a href="#" className="transition-colors hover:text-foreground">
+            <Link href="/privacy-policy" className="transition-colors hover:text-foreground">
               Privacy Policy
-            </a>
-            <a href="#" className="transition-colors hover:text-foreground">
+            </Link>
+            <Link href="/terms-of-service" className="transition-colors hover:text-foreground">
               Terms of Service
-            </a>
-            <a href="#" className="transition-colors hover:text-foreground">
+            </Link>
+            <Link href="/security" className="transition-colors hover:text-foreground">
               Security
-            </a>
+            </Link>
           </div>
         </div>
       </div>
