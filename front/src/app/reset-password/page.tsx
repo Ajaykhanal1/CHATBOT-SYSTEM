@@ -2,8 +2,12 @@ import ResetForm from "../components/auth/ResetForm";
 
 export default function ResetPasswordPage() {
   return (
-    <main className="min-h-screen bg-white">
-      <ResetForm />
+    <main className="relative min-h-screen overflow-hidden bg-background">
+      <div className="absolute inset-0 bg-noise" />
+      <div className="absolute inset-0 bg-grid opacity-40" />
+      <div className="relative z-10">
+        <ResetForm />
+      </div>
     </main>
   );
 }

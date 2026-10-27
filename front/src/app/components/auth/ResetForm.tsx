@@ -79,164 +79,165 @@ export default function ResetForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white px-4">
+    <div className="flex min-h-screen items-center justify-center px-6 py-12 text-foreground">
       <div className="w-full max-w-md">
+        <div className="card-glow relative overflow-hidden rounded-3xl border border-border/60 bg-card/80 p-8 shadow-2xl backdrop-blur-xl">
+          <div className="absolute -top-24 right-0 h-48 w-48 rounded-full bg-primary/20 blur-3xl" />
+          <div className="absolute -bottom-28 left-10 h-56 w-56 rounded-full bg-accent/15 blur-3xl" />
 
-        {/* Logo */}
-        <div className="mb-8 flex justify-center">
-          <Link
-            href="/"
-            className="text-2xl font-bold tracking-tight"
-          >
-            MyChat
-          </Link>
-        </div>
-
-        {/* Heading */}
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Reset password
-          </h1>
-
-          <p className="mt-2 text-sm leading-6 text-gray-500">
-            Create a new password for your account.
-          </p>
-        </div>
-
-        {/* Form */}
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-5"
-          noValidate
-        >
-
-          {/* New Password */}
-          <div>
-            <label
-              htmlFor="password"
-              className="mb-2 block text-sm font-medium"
-            >
-              New password
-            </label>
-
-            <div className="relative">
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter your new password"
-                autoComplete="new-password"
-                {...register("password")}
-                aria-invalid={!!errors.password}
-                className={`w-full rounded-xl border px-4 py-3 pr-20 text-sm outline-none transition ${
-                  errors.password
-                    ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                    : "border-gray-300 focus:border-black focus:ring-1 focus:ring-black"
-                }`}
-              />
-
-              <button
-                type="button"
-                onClick={() =>
-                  setShowPassword((prev) => !prev)
-                }
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-gray-500 hover:text-black"
-              >
-                {showPassword ? "Hide" : "Show"}
-              </button>
+          <div className="relative">
+            {/* Logo */}
+            <div className="mb-8 flex justify-center">
+              <Link href="/" className="text-glow text-2xl font-bold tracking-tight">
+                MyChat
+              </Link>
             </div>
 
-            {errors.password && (
-              <p className="mt-1.5 text-xs text-red-500">
-                {errors.password.message}
+            {/* Heading */}
+            <div className="mb-8 text-center">
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Reset password
+              </h1>
+
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Create a new password for your account.
               </p>
-            )}
-          </div>
+            </div>
 
-          {/* Confirm Password */}
-          <div>
-            <label
-              htmlFor="confirmPassword"
-              className="mb-2 block text-sm font-medium"
+            {/* Form */}
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-5"
+              noValidate
             >
-              Confirm password
-            </label>
+              {/* New Password */}
+              <div>
+                <label
+                  htmlFor="password"
+                  className="mb-2 block text-sm font-medium"
+                >
+                  New password
+                </label>
 
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                type={
-                  showConfirmPassword ? "text" : "password"
-                }
-                placeholder="Confirm your new password"
-                autoComplete="new-password"
-                {...register("confirmPassword")}
-                aria-invalid={!!errors.confirmPassword}
-                className={`w-full rounded-xl border px-4 py-3 pr-20 text-sm outline-none transition ${
-                  errors.confirmPassword
-                    ? "border-red-500 focus:ring-1 focus:ring-red-500"
-                    : "border-gray-300 focus:border-black focus:ring-1 focus:ring-black"
-                }`}
-              />
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your new password"
+                    autoComplete="new-password"
+                    {...register("password")}
+                    aria-invalid={!!errors.password}
+                    className={`w-full rounded-2xl border px-4 py-3 pr-20 text-sm outline-none transition bg-input/80 ${
+                      errors.password
+                        ? "border-destructive focus:ring-1 focus:ring-destructive"
+                        : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
+                    }`}
+                  />
 
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowPassword((prev) => !prev)
+                    }
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
+
+                {errors.password && (
+                  <p className="mt-1.5 text-xs text-destructive">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="mb-2 block text-sm font-medium"
+                >
+                  Confirm password
+                </label>
+
+                <div className="relative">
+                  <input
+                    id="confirmPassword"
+                    type={
+                      showConfirmPassword ? "text" : "password"
+                    }
+                    placeholder="Confirm your new password"
+                    autoComplete="new-password"
+                    {...register("confirmPassword")}
+                    aria-invalid={!!errors.confirmPassword}
+                    className={`w-full rounded-2xl border px-4 py-3 pr-20 text-sm outline-none transition bg-input/80 ${
+                      errors.confirmPassword
+                        ? "border-destructive focus:ring-1 focus:ring-destructive"
+                        : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
+                    }`}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowConfirmPassword((prev) => !prev)
+                    }
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground hover:text-foreground"
+                  >
+                    {showConfirmPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
+
+                {errors.confirmPassword && (
+                  <p className="mt-1.5 text-xs text-destructive">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Success */}
+              {successMessage && (
+                <div className="rounded-2xl border border-emerald-400/40 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-300">
+                  {successMessage}
+                </div>
+              )}
+
+              {/* Error */}
+              {errorMessage && (
+                <div className="rounded-2xl border border-destructive/60 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                  {errorMessage}
+                </div>
+              )}
+
+              {/* Reset Button */}
               <button
-                type="button"
-                onClick={() =>
-                  setShowConfirmPassword((prev) => !prev)
-                }
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-gray-500 hover:text-black"
+                type="submit"
+                disabled={isLoading}
+                className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {showConfirmPassword ? "Hide" : "Show"}
+                {isLoading ? (
+                  <>
+                    <span className="mr-2 inline-block h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground/60 border-t-transparent" />
+                    Resetting...
+                  </>
+                ) : (
+                  "Reset password"
+                )}
               </button>
-            </div>
+            </form>
 
-            {errors.confirmPassword && (
-              <p className="mt-1.5 text-xs text-red-500">
-                {errors.confirmPassword.message}
-              </p>
-            )}
+            {/* Back to Login */}
+            <div className="mt-6 text-center">
+              <Link
+                href="/login"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground hover:underline"
+              >
+                ← Back to login
+              </Link>
+            </div>
           </div>
-
-          {/* Success */}
-          {successMessage && (
-            <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-              {successMessage}
-            </div>
-          )}
-
-          {/* Error */}
-          {errorMessage && (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {errorMessage}
-            </div>
-          )}
-
-          {/* Reset Button */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="flex w-full items-center justify-center rounded-xl bg-black px-4 py-3 font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isLoading ? (
-              <>
-                <span className="mr-2 inline-block h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Resetting...
-              </>
-            ) : (
-              "Reset password"
-            )}
-          </button>
-        </form>
-
-        {/* Back to Login */}
-        <div className="mt-6 text-center">
-          <Link
-            href="/login"
-            className="text-sm font-medium text-gray-600 hover:text-black hover:underline"
-          >
-            ← Back to login
-          </Link>
         </div>
-
       </div>
     </div>
   );

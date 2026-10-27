@@ -2,8 +2,12 @@ import ForgotForm from "../components/auth/ForgotForm";
 
 export default function ForgotPasswordPage() {
   return (
-    <main className="min-h-screen bg-white">
-      <ForgotForm />
+    <main className="relative min-h-screen overflow-hidden bg-background">
+      <div className="absolute inset-0 bg-noise" />
+      <div className="absolute inset-0 bg-grid opacity-40" />
+      <div className="relative z-10">
+        <ForgotForm />
+      </div>
     </main>
   );
 }
