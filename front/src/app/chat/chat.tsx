@@ -124,7 +124,9 @@ export default function ChatPage({
     <main className="relative flex h-screen overflow-hidden bg-background text-foreground">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-noise opacity-60" />
       <div className="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-20" />
-      <ChatSidebar />
+      <aside className="hidden h-full w-[288px] md:block">
+        <ChatSidebar />
+      </aside>
 
       <section className="flex min-w-0 flex-1 flex-col">
         <ChatHeader />
@@ -135,8 +137,8 @@ export default function ChatPage({
             <ChatInput key={`ci-${chatId}`} chatId={chatId} />
           </>
         ) : (
-          <div className="relative flex flex-1 flex-col items-center justify-center px-6">
-            <div className="w-full max-w-3xl text-center">
+          <div className="relative flex flex-1 flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+            <div className="w-full max-w-[1200px] text-center">
               <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-muted-foreground backdrop-blur">
                 <span className="inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-primary to-accent" />
                 <span>Ready to chat</span>

@@ -82,7 +82,7 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen bg-gray-100 p-8 ">
-            <div className="max-w-5xl mx-auto rounded-lg bg-white p-8 shadow-md">
+            <div className="mx-auto w-full max-w-[1200px] rounded-lg bg-white p-4 sm:p-6 lg:p-8 shadow-md">
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="mb-2 text-3xl font-bold text-gray-900">
                         Admin Dashboard

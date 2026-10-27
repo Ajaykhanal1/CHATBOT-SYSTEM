@@ -1,7 +1,7 @@
 export default function CTA() {
   return (
-    <section id="contact" className="relative px-6 py-20">
-      <div className="mx-auto max-w-5xl overflow-hidden rounded-[2.5rem] border border-white/10">
+    <section id="contact" className="relative px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px] overflow-hidden rounded-[2.5rem] border border-white/10">
         <div className="relative px-6 py-16 text-center sm:px-12 md:py-20">
           <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/40 via-accent/30 to-transparent" />
           <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_60%)]" />

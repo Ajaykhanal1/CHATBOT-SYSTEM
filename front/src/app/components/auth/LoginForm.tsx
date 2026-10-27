@@ -119,7 +119,7 @@ export default function LoginForm() {
 
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-6 py-12 text-foreground">
+    <div className="flex min-h-screen items-center justify-center px-4 py-12 text-foreground sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
         <div className="card-glow relative overflow-hidden rounded-3xl border border-border/60 bg-card/80 p-8 shadow-2xl backdrop-blur-xl">
           <div className="absolute -top-24 right-0 h-48 w-48 rounded-full bg-primary/20 blur-3xl" />

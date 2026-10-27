@@ -64,8 +64,8 @@ const features = [
 
 export default function Features() {
   return (
-    <section id="features" className="relative px-6 py-20">
-      <div className="mx-auto max-w-6xl">
+    <section id="features" className="relative px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px]">
         <div className="text-center">
           <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-muted-foreground">
             Everything in one place

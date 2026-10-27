@@ -37,9 +37,9 @@ export default function ChatInput({ chatId }: { chatId: string }) {
   };
 
   return (
-    <div className="relative border-t border-white/5 px-4 py-4 backdrop-blur-xl">
+    <div className="relative border-t border-white/5 px-4 py-4 backdrop-blur-xl sm:px-6 lg:px-8">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-      <form onSubmit={handleSubmit} className="mx-auto max-w-3xl">
+      <form onSubmit={handleSubmit} className="mx-auto w-full max-w-[1200px]">
         <div className="flex items-end gap-2 rounded-[1.75rem] border border-white/10 bg-white/5 p-2 shadow-lg shadow-black/20 backdrop-blur">
           <textarea
             value={message}

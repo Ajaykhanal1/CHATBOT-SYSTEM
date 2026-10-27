@@ -1,7 +1,7 @@
 export default function Hero() {
   return (
-    <section className="relative px-6 pb-28 pt-36 text-center">
-      <div className="mx-auto max-w-5xl">
+    <section className="relative px-4 pb-16 pt-28 text-center sm:px-6 sm:pb-20 sm:pt-36 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px]">
         <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-muted-foreground backdrop-blur">
           <span className="inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-primary to-accent" />
           <span>NEW · Talk with Documents</span>
@@ -37,18 +37,18 @@ export default function Hero() {
           </a>
         </div>
 
-        <div className="card-glow mt-16 grid grid-cols-1 gap-4 rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 backdrop-blur sm:grid-cols-3">
-          <div className="rounded-2xl px-6 py-6 text-center">
-            <p className="text-4xl font-semibold tracking-tight md:text-5xl">35+</p>
-            <p className="mt-2 text-sm text-muted-foreground">Chat Models</p>
+        <div className="card-glow mt-12 grid grid-cols-3 gap-2 rounded-2xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-2 backdrop-blur sm:mt-16 sm:gap-4 sm:rounded-3xl sm:p-6">
+          <div className="rounded-xl px-2 py-4 text-center sm:rounded-2xl sm:px-6 sm:py-6">
+            <p className="text-2xl font-semibold tracking-tight sm:text-4xl md:text-5xl">35+</p>
+            <p className="mt-1 text-[10px] text-muted-foreground sm:mt-2 sm:text-sm">Chat Models</p>
           </div>
-          <div className="rounded-2xl px-6 py-6 text-center sm:border-l sm:border-r sm:border-white/10">
-            <p className="text-4xl font-semibold tracking-tight md:text-5xl">10+</p>
-            <p className="mt-2 text-sm text-muted-foreground">Image Models</p>
+          <div className="rounded-xl px-2 py-4 text-center sm:rounded-2xl sm:border-l sm:border-r sm:border-white/10 sm:px-6 sm:py-6">
+            <p className="text-2xl font-semibold tracking-tight sm:text-4xl md:text-5xl">10+</p>
+            <p className="mt-1 text-[10px] text-muted-foreground sm:mt-2 sm:text-sm">Image Models</p>
           </div>
-          <div className="rounded-2xl px-6 py-6 text-center">
-            <p className="text-4xl font-semibold tracking-tight md:text-5xl">100%</p>
-            <p className="mt-2 text-sm text-muted-foreground">Secure & Private</p>
+          <div className="rounded-xl px-2 py-4 text-center sm:rounded-2xl sm:px-6 sm:py-6">
+            <p className="text-2xl font-semibold tracking-tight sm:text-4xl md:text-5xl">100%</p>
+            <p className="mt-1 text-[10px] text-muted-foreground sm:mt-2 sm:text-sm">Secure & Private</p>
           </div>
         </div>
       </div>

@@ -166,7 +166,7 @@ export default function ChatSidebar() {
   );
 
   return (
-    <aside className="relative hidden w-72 flex-col border-r border-white/5 bg-background/80 backdrop-blur-xl md:flex">
+    <aside className="relative flex h-full w-full flex-col border-r border-white/5 bg-background/80 backdrop-blur-xl">
       <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent" />
 
       <div className="flex h-16 items-center px-5">
