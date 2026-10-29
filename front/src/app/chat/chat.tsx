@@ -122,9 +122,7 @@ export default function ChatPage({
 
   return (
     <main className="relative flex h-screen overflow-hidden bg-background text-foreground">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-noise opacity-60" />
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-20" />
-      <aside className="hidden h-full w-60 shrink-0 md:block lg:w-72">
+      <aside className="hidden h-full w-[260px] shrink-0 md:block">
         <ChatSidebar />
       </aside>
 
@@ -137,41 +135,33 @@ export default function ChatPage({
             <ChatInput key={`ci-${chatId}`} chatId={chatId} />
           </>
         ) : (
-          <div className="relative flex flex-1 flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
-            <div className="w-full max-w-[1200px] text-center">
-              <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-muted-foreground backdrop-blur">
-                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-primary to-accent" />
-                <span>Ready to chat</span>
-              </div>
-              <h1 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
-                Start a new conversation
+          <div className="relative flex flex-1 flex-col items-center justify-center px-0">
+            <div className="w-full max-w-3xl text-center">
+              <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                What can I help with?
               </h1>
-              <p className="mt-3 text-balance text-muted-foreground">
-                Pick a model from the header and ask anything to get going.
-              </p>
 
               <form onSubmit={handleStart} className="mt-8">
-                <div className="flex items-end gap-2 rounded-[1.75rem] border border-white/10 bg-white/5 p-2 shadow-lg shadow-black/20 backdrop-blur">
+                <div className="relative mx-auto flex items-end rounded-3xl border border-border bg-card p-2 shadow-sm">
                   <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Ask anything..."
+                    placeholder="Message..."
                     rows={1}
-                    className="max-h-40 min-h-10 flex-1 resize-none bg-transparent px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                    className="max-h-40 min-h-11 flex-1 resize-none bg-transparent px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground"
                     disabled={creating || newChatDisabled}
                   />
                   <button
                     type="submit"
                     disabled={!message.trim() || creating || newChatDisabled}
-                    className="group relative inline-flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:shadow-primary/40 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    <SendHorizontal className="relative z-10 h-4 w-4" />
-                    <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-700 group-hover:translate-x-full" />
+                    <SendHorizontal className="h-4 w-4" />
                   </button>
                 </div>
                 <p className="mt-2 text-center text-xs text-muted-foreground">
-                  {newChatDisabled ? "New chat on cooldown (1 min)" : "AI can make mistakes. Check important information."}
+                  {newChatDisabled ? "New chat on cooldown (1 min)" : ""}
                 </p>
               </form>
             </div>

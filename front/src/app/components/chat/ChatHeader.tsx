@@ -7,28 +7,18 @@ import ChatSidebar from "./ChatSidebar";
 
 export default function ChatHeader() {
   return (
-    <header className="relative flex h-16 items-center justify-between border-b border-white/5 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
-      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-      <div className="flex items-center gap-3">
+    <header className="flex h-14 items-center justify-between border-b border-border px-4">
+      <div className="flex items-center gap-2">
         <Dialog>
           <DialogTrigger className="md:hidden">
             <Menu className="h-5 w-5 text-muted-foreground" />
           </DialogTrigger>
-          <DialogContent className="left-0 top-0 h-[100dvh] w-72 max-w-[calc(100vw-2rem)] translate-x-0 translate-y-0 rounded-none border-0 bg-transparent p-0 shadow-none">
-            <div className="h-full w-72 border-r border-white/5 bg-background">
-              <ChatSidebar />
-            </div>
+          <DialogContent className="left-0 top-0 h-[100dvh] w-[260px] translate-x-0 translate-y-0 rounded-none border-0 p-0">
+            <ChatSidebar />
           </DialogContent>
         </Dialog>
 
         <ModelSelector />
-      </div>
-
-      <div className="flex items-center gap-2">
-        <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-muted-foreground sm:flex">
-          <span className="inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-primary to-accent" />
-          <span>MyChat</span>
-        </div>
       </div>
     </header>
   );

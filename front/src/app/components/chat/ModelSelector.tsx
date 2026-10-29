@@ -18,21 +18,18 @@ export default function ModelSelector() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-foreground backdrop-blur transition-all hover:border-white/20"
+        className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm hover:bg-accent"
       >
-        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-primary to-accent" />
         <span>{selected.name}</span>
-        <span className="hidden text-xs text-muted-foreground sm:inline">· {selected.tag}</span>
-        <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-y-0.5" />
+        <span className="text-muted-foreground">· {selected.tag}</span>
+        <ChevronDown className="h-4 w-4 text-muted-foreground" />
       </button>
 
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 top-12 z-50 w-64 overflow-hidden rounded-3xl border border-white/10 bg-background/90 p-2 shadow-2xl shadow-primary/10 backdrop-blur-xl">
-            <p className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Choose model
-            </p>
+          <div className="absolute left-0 top-9 z-50 w-56 overflow-hidden rounded-lg border border-border bg-popover p-1 shadow-md">
+            <p className="px-2 py-1.5 text-xs text-muted-foreground">Choose model</p>
             {models.map((model) => (
               <button
                 key={model.id}
@@ -40,15 +37,12 @@ export default function ModelSelector() {
                   setSelected(model);
                   setOpen(false);
                 }}
-                className="flex w-full items-center justify-between rounded-2xl px-3 py-2 text-left text-sm transition-colors hover:bg-white/5"
+                className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent"
               >
                 <div>
-                  <p className="text-foreground">{model.name}</p>
+                  <p>{model.name}</p>
                   <p className="text-xs text-muted-foreground">{model.tag}</p>
                 </div>
-                {selected.id === model.id && (
-                  <span className="inline-flex h-1.5 w-1.5 rounded-full bg-gradient-to-r from-primary to-accent" />
-                )}
               </button>
             ))}
           </div>

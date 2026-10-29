@@ -98,8 +98,8 @@ export default function ChatMessages({ chatId }: { chatId: string }) {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-[1200px] space-y-6">
+    <div className="flex-1 overflow-y-auto">
+      <div className="mx-auto w-full max-w-3xl px-0 py-6">
         {(() => {
           const seen = new Set<string>();
           const unique = messages.filter((m) => {
@@ -109,24 +109,24 @@ export default function ChatMessages({ chatId }: { chatId: string }) {
             return true;
           });
           return unique.map((message, idx) => (
-          <div key={`${message._id}-${idx}`} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-            <div className="flex max-w-[85%] items-start gap-3">
-              {message.role === "assistant" && (
-                <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-xs text-primary-foreground">
-                  AI
+            <div key={`${message._id}-${idx}`} className="mb-6">
+              {message.role === "user" ? (
+                <div className="flex justify-end">
+                  <div className="max-w-[85%] rounded-2xl bg-primary px-3 py-2 text-sm text-primary-foreground">
+                    <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs">
+                    AI
+                  </div>
+                  <div className="min-w-0 flex-1 py-1 text-sm leading-relaxed">
+                    <p className="whitespace-pre-wrap break-words">{message.content}</p>
+                  </div>
                 </div>
               )}
-              <div
-                className={`relative overflow-hidden rounded-3xl px-6 py-4 ${
-                  message.role === "user"
-                    ? "bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg shadow-primary/20"
-                    : "border border-white/10 bg-gradient-to-b from-white/10 to-white/5 text-foreground backdrop-blur"
-                }`}
-              >
-                <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
-              </div>
             </div>
-          </div>
           ));
         })()}
         <div ref={bottomRef} />
