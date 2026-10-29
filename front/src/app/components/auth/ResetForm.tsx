@@ -79,27 +79,27 @@ export default function ResetForm() {
   };
 
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center px-4 py-4 text-foreground sm:px-6 sm:py-12 lg:px-8">
+    <div className="flex min-h-[100dvh] items-center justify-center p-0 text-foreground sm:px-6 sm:py-12 lg:px-8">
       <div className="w-full max-w-md">
-        <div className="card-glow relative overflow-hidden rounded-3xl border border-border/60 bg-card/80 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
-          <div className="absolute -top-24 right-0 h-48 w-48 rounded-full bg-primary/20 blur-3xl" />
-          <div className="absolute -bottom-28 left-10 h-56 w-56 rounded-full bg-accent/15 blur-3xl" />
+        <div className="relative overflow-hidden p-4 sm:rounded-3xl sm:border sm:border-border/60 sm:bg-card/80 sm:p-8 sm:shadow-2xl sm:backdrop-blur-xl">
+          <div className="absolute -top-24 right-0 hidden h-48 w-48 rounded-full bg-primary/20 blur-3xl sm:block" />
+          <div className="absolute -bottom-28 left-10 hidden h-56 w-56 rounded-full bg-accent/15 blur-3xl sm:block" />
 
           <div className="relative">
             {/* Logo */}
-            <div className="mb-6 flex justify-center sm:mb-8">
-              <Link href="/" className="text-glow text-2xl font-bold tracking-tight">
+            <div className="mb-2 flex justify-center sm:mb-8">
+              <Link href="/" className="text-glow text-xl font-bold tracking-tight sm:text-2xl">
                 MyChat
               </Link>
             </div>
 
             {/* Heading */}
-            <div className="mb-6 text-center sm:mb-8">
-              <h1 className="text-2xl font-semibold tracking-tight">
+            <div className="mb-2 text-center sm:mb-8">
+              <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
                 Reset password
               </h1>
 
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              <p className="mt-1 text-xs leading-5 text-muted-foreground sm:mt-2 sm:text-sm sm:leading-6">
                 Create a new password for your account.
               </p>
             </div>
@@ -107,14 +107,14 @@ export default function ResetForm() {
             {/* Form */}
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="space-y-4 sm:space-y-5"
+              className="space-y-3 sm:space-y-5"
               noValidate
             >
               {/* New Password */}
               <div>
                 <label
                   htmlFor="password"
-                  className="mb-2 block text-sm font-medium"
+                  className="mb-1 block text-sm font-medium sm:mb-2"
                 >
                   New password
                 </label>
@@ -127,7 +127,7 @@ export default function ResetForm() {
                     autoComplete="new-password"
                     {...register("password")}
                     aria-invalid={!!errors.password}
-                    className={`w-full rounded-2xl border px-4 py-3 pr-20 text-base outline-none sm:text-sm transition bg-input/80 ${
+                    className={`w-full rounded-2xl border px-4 py-2.5 pr-20 text-base outline-none sm:py-3 sm:text-sm transition bg-input/80 ${
                       errors.password
                         ? "border-destructive focus:ring-1 focus:ring-destructive"
                         : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
@@ -156,7 +156,7 @@ export default function ResetForm() {
               <div>
                 <label
                   htmlFor="confirmPassword"
-                  className="mb-2 block text-sm font-medium"
+                  className="mb-1 block text-sm font-medium sm:mb-2"
                 >
                   Confirm password
                 </label>
@@ -171,7 +171,7 @@ export default function ResetForm() {
                     autoComplete="new-password"
                     {...register("confirmPassword")}
                     aria-invalid={!!errors.confirmPassword}
-                    className={`w-full rounded-2xl border px-4 py-3 pr-20 text-base outline-none sm:text-sm transition bg-input/80 ${
+                    className={`w-full rounded-2xl border px-4 py-2.5 pr-20 text-base outline-none sm:py-3 sm:text-sm transition bg-input/80 ${
                       errors.confirmPassword
                         ? "border-destructive focus:ring-1 focus:ring-destructive"
                         : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
@@ -214,7 +214,7 @@ export default function ResetForm() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-2.5 font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:py-3"
               >
                 {isLoading ? (
                   <>
@@ -228,10 +228,10 @@ export default function ResetForm() {
             </form>
 
             {/* Back to Login */}
-            <div className="mt-5 text-center sm:mt-6">
+            <div className="mt-3 text-center sm:mt-5">
               <Link
                 href="/login"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground hover:underline"
+                className="text-xs font-medium text-muted-foreground hover:text-foreground hover:underline sm:text-sm"
               >
                 ← Back to login
               </Link>

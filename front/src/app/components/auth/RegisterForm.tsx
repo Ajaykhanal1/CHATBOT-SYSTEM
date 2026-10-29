@@ -59,27 +59,27 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center px-4 py-4 text-foreground sm:px-6 sm:py-12 lg:px-8">
+    <div className="flex min-h-[100dvh] items-center justify-center p-0 text-foreground sm:px-6 sm:py-12 lg:px-8">
       <div className="w-full max-w-md">
-        <div className="card-glow relative overflow-hidden rounded-3xl border border-border/60 bg-card/80 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
-          <div className="absolute -top-24 right-0 h-48 w-48 rounded-full bg-primary/20 blur-3xl" />
-          <div className="absolute -bottom-28 left-10 h-56 w-56 rounded-full bg-accent/15 blur-3xl" />
+        <div className="relative overflow-hidden p-4 sm:rounded-3xl sm:border sm:border-border/60 sm:bg-card/80 sm:p-8 sm:shadow-2xl sm:backdrop-blur-xl">
+          <div className="absolute -top-24 right-0 hidden h-48 w-48 rounded-full bg-primary/20 blur-3xl sm:block" />
+          <div className="absolute -bottom-28 left-10 hidden h-56 w-56 rounded-full bg-accent/15 blur-3xl sm:block" />
 
           <div className="relative">
             {/* Logo */}
-            <div className="mb-6 text-center sm:mb-8">
-              <Link href="/" className="text-glow text-2xl font-bold tracking-tight">
+            <div className="mb-2 text-center sm:mb-8">
+              <Link href="/" className="text-glow text-xl font-bold tracking-tight sm:text-2xl">
                 MyChat
               </Link>
             </div>
 
             {/* Heading */}
             <div className="text-center">
-              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              <h1 className="text-xl font-bold tracking-tight sm:text-3xl">
                 Create your account
               </h1>
 
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-1 text-xs text-muted-foreground sm:mt-2 sm:text-sm">
                 Start chatting with AI today
               </p>
             </div>
@@ -88,7 +88,7 @@ export default function RegisterForm() {
             <button
               type="button"
               disabled={isLoading}
-              className="mt-6 flex w-full items-center justify-center gap-3 sm:mt-8 rounded-2xl border border-border/80 bg-secondary/60 px-4 py-3 text-sm font-medium transition hover:bg-secondary disabled:opacity-50"
+              className="mt-3 flex w-full items-center justify-center gap-3 rounded-2xl border border-border/80 bg-secondary/60 px-4 py-2.5 text-sm font-medium transition hover:bg-secondary disabled:opacity-50 sm:mt-8 sm:py-3"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
@@ -112,7 +112,7 @@ export default function RegisterForm() {
             </button>
 
             {/* Divider */}
-            <div className="my-5 flex items-center gap-4 sm:my-7">
+            <div className="my-3 flex items-center gap-4 sm:my-7">
               <div className="h-px flex-1 bg-border/70" />
 
               <span className="text-xs text-muted-foreground">
@@ -132,14 +132,14 @@ export default function RegisterForm() {
             {/* Form */}
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="space-y-4 sm:space-y-5"
+              className="space-y-3 sm:space-y-5"
               noValidate
             >
               {/* Name */}
               <div>
                 <label
                   htmlFor="name"
-                  className="mb-2 block text-sm font-medium"
+                  className="mb-1 block text-sm font-medium sm:mb-2"
                 >
                   Name
                 </label>
@@ -151,7 +151,7 @@ export default function RegisterForm() {
                   autoComplete="name"
                   {...register("name")}
                   aria-invalid={!!errors.name}
-                  className={`w-full rounded-2xl border px-4 py-3 text-base outline-none sm:text-sm transition bg-input/80 ${errors.name
+                  className={`w-full rounded-2xl border px-4 py-2.5 text-base sm:py-3 outline-none sm:text-sm transition bg-input/80 ${errors.name
                     ? "border-destructive focus:ring-1 focus:ring-destructive"
                     : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
                     }`}
@@ -168,7 +168,7 @@ export default function RegisterForm() {
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-2 block text-sm font-medium"
+                  className="mb-1 block text-sm font-medium sm:mb-2"
                 >
                   Email
                 </label>
@@ -180,7 +180,7 @@ export default function RegisterForm() {
                   autoComplete="email"
                   {...register("email")}
                   aria-invalid={!!errors.email}
-                  className={`w-full rounded-2xl border px-4 py-3 text-base outline-none sm:text-sm transition bg-input/80 ${errors.email
+                  className={`w-full rounded-2xl border px-4 py-2.5 text-base sm:py-3 outline-none sm:text-sm transition bg-input/80 ${errors.email
                     ? "border-destructive focus:ring-1 focus:ring-destructive"
                     : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
                     }`}
@@ -197,7 +197,7 @@ export default function RegisterForm() {
               <div>
                 <label
                   htmlFor="password"
-                  className="mb-2 block text-sm font-medium"
+                  className="mb-1 block text-sm font-medium sm:mb-2"
                 >
                   Password
                 </label>
@@ -210,7 +210,7 @@ export default function RegisterForm() {
                     autoComplete="new-password"
                     {...register("password")}
                     aria-invalid={!!errors.password}
-                    className={`w-full rounded-2xl border px-4 py-3 pr-20 text-base outline-none sm:text-sm transition bg-input/80 ${errors.password
+                    className={`w-full rounded-2xl border px-4 py-2.5 pr-20 text-base outline-none sm:py-3 sm:text-sm transition bg-input/80 ${errors.password
                       ? "border-destructive focus:ring-1 focus:ring-destructive"
                       : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
                       }`}
@@ -234,11 +234,11 @@ export default function RegisterForm() {
 
               {/* Terms */}
               <div>
-                <label className="flex cursor-pointer items-start gap-3 text-sm text-muted-foreground">
+                <label className="flex cursor-pointer items-start gap-3 text-xs text-muted-foreground sm:text-sm">
                   <input
                     type="checkbox"
                     {...register("acceptedTerms")}
-                    className="mt-1 h-4 w-4 rounded border-border/80 bg-input/80 text-primary focus:ring-primary"
+                    className="mt-0.5 h-4 w-4 rounded border-border/80 bg-input/80 text-primary focus:ring-primary sm:mt-1"
                   />
 
                   <span>
@@ -270,7 +270,7 @@ export default function RegisterForm() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
+                className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-2.5 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-50 sm:py-3"
               >
                 {isLoading ? (
                   <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground/60 border-t-transparent" />
@@ -281,7 +281,7 @@ export default function RegisterForm() {
             </form>
 
             {/* Login */}
-            <p className="mt-6 text-center text-sm text-muted-foreground sm:mt-8">
+            <p className="mt-3 text-center text-xs text-muted-foreground sm:mt-8 sm:text-sm">
               Already have an account?{" "}
               <Link
                 href="/login"
