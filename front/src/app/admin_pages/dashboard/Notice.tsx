@@ -60,7 +60,7 @@ export default function Notice() {
       </div>
 
       <form onSubmit={addNotice} className="flex flex-1 flex-col">
-        <FieldGroup className="grid gap-4">
+        <FieldGroup className="admin-form grid gap-4">
           {/* Title */}
           <Field>
             <Label htmlFor="title">Title</Label>
@@ -85,7 +85,7 @@ export default function Notice() {
               placeholder="Write the notice content"
               rows={5}
               required
-              className="w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+              className="w-full max-h-[200px] rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
             />
           </Field>
         </FieldGroup>
@@ -100,7 +100,7 @@ export default function Notice() {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50"
+            className="h-12 w-full rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 text-base font-medium text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50"
           >
             {loading ? "Adding..." : "Add Notice"}
           </Button>

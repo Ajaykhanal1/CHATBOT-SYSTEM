@@ -74,16 +74,16 @@ export default function Dashboard() {
   };
 
   const tabs = [
-    { id: "knowledge", label: "Knowledge Base", icon: "📄" },
-    { id: "students", label: "Students", icon: "👨‍🎓" },
-    { id: "teachers", label: "Teachers", icon: "👨‍🏫" },
-    { id: "courses", label: "Courses", icon: "📚" },
-    { id: "attendance", label: "Attendance", icon: "✅" },
-    { id: "notices", label: "Notices", icon: "📢" },
+    { id: "knowledge", label: "Knowledge Base" },
+    { id: "students", label: "Students" },
+    { id: "teachers", label: "Teachers" },
+    { id: "courses", label: "Courses" },
+    { id: "attendance", label: "Attendance" },
+    { id: "notices", label: "Notices" },
   ];
 
   return (
-    <div className="relative flex h-screen flex-col overflow-hidden bg-background text-foreground">
+    <div className="admin-scale relative flex h-screen flex-col overflow-hidden bg-background text-foreground">
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[880px] bg-noise" />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[880px] bg-grid opacity-30" />
       
@@ -120,13 +120,12 @@ export default function Dashboard() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm transition-all ${
+                    className={`flex w-full items-center rounded-2xl px-4 py-3 text-sm transition-all ${
                       activeTab === tab.id
                         ? "bg-gradient-to-r from-primary/20 to-accent/20 text-foreground shadow-lg shadow-primary/10"
                         : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
                     }`}
                   >
-                    <span className="text-lg">{tab.icon}</span>
                     <span className="font-medium">{tab.label}</span>
                   </button>
                 ))}

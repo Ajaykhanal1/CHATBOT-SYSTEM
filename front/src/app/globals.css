@@ -145,4 +145,25 @@
   .card-glow {
     box-shadow: 0 40px 120px -60px oklch(0.72 0.19 295 / 0.6);
   }
+  /* Admin dashboard upscale (~8%): Tailwind v4 spacing/text utilities read these vars */
+  .admin-scale {
+    --spacing: 0.27rem;
+    --text-xs: 0.81rem;
+    --text-sm: 0.95rem;
+    --text-base: 1.08rem;
+    --text-lg: 1.22rem;
+    --text-xl: 1.35rem;
+    --text-2xl: 1.62rem;
+    --text-3xl: 2.03rem;
+  }
+  /* Bigger labels and field controls inside admin dashboard forms */
+  .admin-form :is(label) {
+    font-size: var(--text-base);
+  }
+  .admin-form :is(input, select, textarea) {
+    font-size: var(--text-base);
+  }
+  .admin-form :is(input, select) {
+    height: calc(var(--spacing) * 10);
+  }
 }

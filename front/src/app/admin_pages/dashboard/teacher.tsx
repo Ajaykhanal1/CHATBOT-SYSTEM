@@ -94,7 +94,7 @@ export default function Teacher() {
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
-        <FieldGroup className="grid gap-4 sm:grid-cols-2">
+        <FieldGroup className="admin-form grid gap-4 sm:grid-cols-2">
           {/* Name */}
           <Field>
             <Label htmlFor="teacher-name">Name</Label>
@@ -189,7 +189,7 @@ export default function Teacher() {
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50"
+            className="h-12 w-full rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 text-base font-medium text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50"
           >
             {isLoading ? "Adding..." : "Add Teacher"}
           </Button>
