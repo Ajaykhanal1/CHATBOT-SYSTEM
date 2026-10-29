@@ -26,7 +26,7 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <div className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
+        <div className="hidden items-center gap-5 text-[13px] text-muted-foreground md:flex lg:gap-8 lg:text-sm">
           <a href="#models" className="transition-colors hover:text-foreground">
             Models
           </a>
@@ -47,12 +47,12 @@ export default function Navbar() {
         <div className="flex items-center gap-1 sm:gap-2">
           {user ? (
             <>
-              <span className="hidden md:inline-flex items-center rounded-full px-4 py-2 text-sm text-muted-foreground">
+              <span className="hidden lg:inline-flex items-center rounded-full px-4 py-2 text-sm text-muted-foreground">
                 Hi, {user.name?.split(" ")[0] || user.email}
               </span>
               <button
                 onClick={handleLogout}
-                className="inline-flex rounded-full px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground sm:px-4 sm:py-2 sm:text-sm"
+                className="inline-flex rounded-full px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground lg:px-4 lg:py-2 lg:text-sm"
               >
                 Logout
               </button>
@@ -61,13 +61,13 @@ export default function Navbar() {
             <>
               <Link
                 href="/login"
-                className="inline-flex rounded-full px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground sm:px-4 sm:py-2 sm:text-sm"
+                className="inline-flex rounded-full px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground lg:px-4 lg:py-2 lg:text-sm"
               >
                 Login
               </Link>
               <Link
                 href="/register"
-                className="inline-flex rounded-full px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground sm:px-4 sm:py-2 sm:text-sm"
+                className="inline-flex rounded-full px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground lg:px-4 lg:py-2 lg:text-sm"
               >
                 Sign up
               </Link>
@@ -75,7 +75,7 @@ export default function Navbar() {
           )}
           <Link
             href="/chat"
-            className="group relative inline-flex items-center gap-1 overflow-hidden rounded-full bg-gradient-to-r from-primary to-accent px-3 py-1.5 text-xs font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:shadow-primary/40 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm"
+            className="group relative inline-flex items-center gap-1 overflow-hidden rounded-full bg-gradient-to-r from-primary to-accent px-3 py-1.5 text-xs font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:shadow-primary/40 lg:gap-2 lg:px-5 lg:py-2.5 lg:text-sm"
           >
             <span className="relative z-10">{user ? "Go to Chat" : "Try Now"}</span>
             <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-700 group-hover:translate-x-full" />

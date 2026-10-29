@@ -241,7 +241,7 @@ export default function ChatSidebar() {
                   >
                     {chat.title}
                   </Link>
-                  <div className="hidden items-center gap-1 pr-1 group-hover:flex">
+                  <div className="flex items-center gap-1 pr-1 opacity-60 transition-opacity group-hover:opacity-100">
                     <button
                       type="button"
                       onClick={(e) => handleStartRename(e, chat)}

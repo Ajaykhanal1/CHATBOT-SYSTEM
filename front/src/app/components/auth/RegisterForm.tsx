@@ -59,27 +59,27 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center p-0 text-foreground sm:px-6 sm:py-12 lg:px-8">
-      <div className="w-full max-w-md">
-        <div className="relative overflow-hidden p-4 sm:rounded-3xl sm:border sm:border-border/60 sm:bg-card/80 sm:p-8 sm:shadow-2xl sm:backdrop-blur-xl">
-          <div className="absolute -top-24 right-0 hidden h-48 w-48 rounded-full bg-primary/20 blur-3xl sm:block" />
-          <div className="absolute -bottom-28 left-10 hidden h-56 w-56 rounded-full bg-accent/15 blur-3xl sm:block" />
+    <div className="flex min-h-[100dvh] items-center justify-center p-0 text-foreground md:px-8 md:py-10 lg:px-8 lg:py-12">
+      <div className="w-full max-w-md md:max-w-2xl lg:max-w-md">
+        <div className="relative overflow-hidden p-4 md:p-8 lg:rounded-3xl lg:border lg:border-border/60 lg:bg-card/80 lg:p-8 lg:shadow-2xl lg:backdrop-blur-xl">
+          <div className="absolute -top-24 right-0 hidden h-48 w-48 rounded-full bg-primary/20 blur-3xl lg:block" />
+          <div className="absolute -bottom-28 left-10 hidden h-56 w-56 rounded-full bg-accent/15 blur-3xl lg:block" />
 
           <div className="relative">
             {/* Logo */}
-            <div className="mb-2 text-center sm:mb-8">
-              <Link href="/" className="text-glow text-xl font-bold tracking-tight sm:text-2xl">
+            <div className="mb-2 text-center md:mb-6 lg:mb-8">
+              <Link href="/" className="text-glow text-xl font-bold tracking-tight md:text-3xl lg:text-2xl">
                 MyChat
               </Link>
             </div>
 
             {/* Heading */}
             <div className="text-center">
-              <h1 className="text-xl font-bold tracking-tight sm:text-3xl">
+              <h1 className="text-xl font-bold tracking-tight md:text-4xl lg:text-3xl">
                 Create your account
               </h1>
 
-              <p className="mt-1 text-xs text-muted-foreground sm:mt-2 sm:text-sm">
+              <p className="mt-1 text-xs text-muted-foreground md:mt-2 md:text-lg lg:text-sm">
                 Start chatting with AI today
               </p>
             </div>
@@ -88,7 +88,7 @@ export default function RegisterForm() {
             <button
               type="button"
               disabled={isLoading}
-              className="mt-3 flex w-full items-center justify-center gap-3 rounded-2xl border border-border/80 bg-secondary/60 px-4 py-2.5 text-sm font-medium transition hover:bg-secondary disabled:opacity-50 sm:mt-8 sm:py-3"
+              className="mt-3 flex w-full items-center justify-center gap-3 rounded-2xl border border-border/80 bg-secondary/60 px-4 py-2.5 md:mt-6 md:py-3 text-sm font-medium transition hover:bg-secondary md:text-lg lg:text-sm disabled:opacity-50"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
@@ -112,7 +112,7 @@ export default function RegisterForm() {
             </button>
 
             {/* Divider */}
-            <div className="my-3 flex items-center gap-4 sm:my-7">
+            <div className="my-3 flex items-center gap-4 md:my-6 lg:my-7">
               <div className="h-px flex-1 bg-border/70" />
 
               <span className="text-xs text-muted-foreground">
@@ -124,7 +124,7 @@ export default function RegisterForm() {
 
             {/* API Error */}
             {apiError && (
-              <div className="mb-4 rounded-2xl border border-destructive/60 bg-destructive/10 p-3 text-center text-xs text-destructive">
+              <div className="mb-4 rounded-2xl border border-destructive/60 bg-destructive/10 p-3 text-center text-xs text-destructive md:text-sm lg:text-xs">
                 {apiError}
               </div>
             )}
@@ -132,14 +132,14 @@ export default function RegisterForm() {
             {/* Form */}
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="space-y-3 sm:space-y-5"
+              className="space-y-3 md:space-y-4 lg:space-y-5"
               noValidate
             >
               {/* Name */}
               <div>
                 <label
                   htmlFor="name"
-                  className="mb-1 block text-sm font-medium sm:mb-2"
+                  className="mb-1 block text-sm font-medium md:mb-2 md:text-lg lg:text-sm"
                 >
                   Name
                 </label>
@@ -151,7 +151,7 @@ export default function RegisterForm() {
                   autoComplete="name"
                   {...register("name")}
                   aria-invalid={!!errors.name}
-                  className={`w-full rounded-2xl border px-4 py-2.5 text-base sm:py-3 outline-none sm:text-sm transition bg-input/80 ${errors.name
+                  className={`w-full rounded-2xl border px-4 py-2.5 md:py-3 text-base lg:py-3 md:text-lg outline-none lg:text-sm transition bg-input/80 ${errors.name
                     ? "border-destructive focus:ring-1 focus:ring-destructive"
                     : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
                     }`}
@@ -168,7 +168,7 @@ export default function RegisterForm() {
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-1 block text-sm font-medium sm:mb-2"
+                  className="mb-1 block text-sm font-medium md:mb-2 md:text-lg lg:text-sm"
                 >
                   Email
                 </label>
@@ -180,7 +180,7 @@ export default function RegisterForm() {
                   autoComplete="email"
                   {...register("email")}
                   aria-invalid={!!errors.email}
-                  className={`w-full rounded-2xl border px-4 py-2.5 text-base sm:py-3 outline-none sm:text-sm transition bg-input/80 ${errors.email
+                  className={`w-full rounded-2xl border px-4 py-2.5 md:py-3 text-base lg:py-3 md:text-lg outline-none lg:text-sm transition bg-input/80 ${errors.email
                     ? "border-destructive focus:ring-1 focus:ring-destructive"
                     : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
                     }`}
@@ -197,7 +197,7 @@ export default function RegisterForm() {
               <div>
                 <label
                   htmlFor="password"
-                  className="mb-1 block text-sm font-medium sm:mb-2"
+                  className="mb-1 block text-sm font-medium md:mb-2 md:text-lg lg:text-sm"
                 >
                   Password
                 </label>
@@ -210,7 +210,7 @@ export default function RegisterForm() {
                     autoComplete="new-password"
                     {...register("password")}
                     aria-invalid={!!errors.password}
-                    className={`w-full rounded-2xl border px-4 py-2.5 pr-20 text-base outline-none sm:py-3 sm:text-sm transition bg-input/80 ${errors.password
+                    className={`w-full rounded-2xl border px-4 py-2.5 md:py-3 pr-20 text-base md:text-lg outline-none lg:py-3 lg:text-sm transition bg-input/80 ${errors.password
                       ? "border-destructive focus:ring-1 focus:ring-destructive"
                       : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
                       }`}
@@ -219,7 +219,7 @@ export default function RegisterForm() {
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground hover:text-foreground"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground hover:text-foreground md:text-lg lg:text-sm"
                   >
                     {showPassword ? "Hide" : "Show"}
                   </button>
@@ -234,11 +234,11 @@ export default function RegisterForm() {
 
               {/* Terms */}
               <div>
-                <label className="flex cursor-pointer items-start gap-3 text-xs text-muted-foreground sm:text-sm">
+                <label className="flex cursor-pointer items-start gap-3 text-xs text-muted-foreground md:text-lg lg:text-sm">
                   <input
                     type="checkbox"
                     {...register("acceptedTerms")}
-                    className="mt-0.5 h-4 w-4 rounded border-border/80 bg-input/80 text-primary focus:ring-primary sm:mt-1"
+                    className="mt-0.5 h-4 w-4 rounded border-border/80 bg-input/80 text-primary focus:ring-primary md:mt-1 lg:mt-1"
                   />
 
                   <span>
@@ -270,7 +270,7 @@ export default function RegisterForm() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-2.5 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-50 sm:py-3"
+                className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-2.5 md:py-3 md:text-lg font-medium text-primary-foreground lg:text-base transition hover:opacity-90 disabled:opacity-50 lg:py-3"
               >
                 {isLoading ? (
                   <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground/60 border-t-transparent" />
@@ -281,7 +281,7 @@ export default function RegisterForm() {
             </form>
 
             {/* Login */}
-            <p className="mt-3 text-center text-xs text-muted-foreground sm:mt-8 sm:text-sm">
+            <p className="mt-3 text-center text-xs text-muted-foreground md:mt-6 md:text-lg lg:text-sm">
               Already have an account?{" "}
               <Link
                 href="/login"

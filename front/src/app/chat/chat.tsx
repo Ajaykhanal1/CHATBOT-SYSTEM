@@ -124,7 +124,7 @@ export default function ChatPage({
     <main className="relative flex h-screen overflow-hidden bg-background text-foreground">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-noise opacity-60" />
       <div className="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-20" />
-      <aside className="hidden h-full w-[288px] md:block">
+      <aside className="hidden h-full w-60 shrink-0 md:block lg:w-72">
         <ChatSidebar />
       </aside>
 

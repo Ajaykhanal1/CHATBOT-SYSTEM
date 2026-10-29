@@ -79,27 +79,27 @@ export default function ResetForm() {
   };
 
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center p-0 text-foreground sm:px-6 sm:py-12 lg:px-8">
-      <div className="w-full max-w-md">
-        <div className="relative overflow-hidden p-4 sm:rounded-3xl sm:border sm:border-border/60 sm:bg-card/80 sm:p-8 sm:shadow-2xl sm:backdrop-blur-xl">
-          <div className="absolute -top-24 right-0 hidden h-48 w-48 rounded-full bg-primary/20 blur-3xl sm:block" />
-          <div className="absolute -bottom-28 left-10 hidden h-56 w-56 rounded-full bg-accent/15 blur-3xl sm:block" />
+    <div className="flex min-h-[100dvh] items-center justify-center p-0 text-foreground md:px-8 md:py-10 lg:px-8 lg:py-12">
+      <div className="w-full max-w-md md:max-w-2xl lg:max-w-md">
+        <div className="relative overflow-hidden p-4 md:p-8 lg:rounded-3xl lg:border lg:border-border/60 lg:bg-card/80 lg:p-8 lg:shadow-2xl lg:backdrop-blur-xl">
+          <div className="absolute -top-24 right-0 hidden h-48 w-48 rounded-full bg-primary/20 blur-3xl lg:block" />
+          <div className="absolute -bottom-28 left-10 hidden h-56 w-56 rounded-full bg-accent/15 blur-3xl lg:block" />
 
           <div className="relative">
             {/* Logo */}
-            <div className="mb-2 flex justify-center sm:mb-8">
-              <Link href="/" className="text-glow text-xl font-bold tracking-tight sm:text-2xl">
+            <div className="mb-2 flex justify-center md:mb-6 lg:mb-8">
+              <Link href="/" className="text-glow text-xl font-bold tracking-tight md:text-3xl lg:text-2xl">
                 MyChat
               </Link>
             </div>
 
             {/* Heading */}
-            <div className="mb-2 text-center sm:mb-8">
-              <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
+            <div className="mb-2 text-center md:mb-6 lg:mb-8">
+              <h1 className="text-xl font-semibold tracking-tight md:text-4xl lg:text-2xl">
                 Reset password
               </h1>
 
-              <p className="mt-1 text-xs leading-5 text-muted-foreground sm:mt-2 sm:text-sm sm:leading-6">
+              <p className="mt-1 text-xs leading-5 text-muted-foreground md:mt-2 md:text-lg lg:text-sm md:leading-6">
                 Create a new password for your account.
               </p>
             </div>
@@ -107,14 +107,14 @@ export default function ResetForm() {
             {/* Form */}
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="space-y-3 sm:space-y-5"
+              className="space-y-3 md:space-y-4 lg:space-y-5"
               noValidate
             >
               {/* New Password */}
               <div>
                 <label
                   htmlFor="password"
-                  className="mb-1 block text-sm font-medium sm:mb-2"
+                  className="mb-1 block text-sm font-medium md:mb-2 md:text-lg lg:text-sm"
                 >
                   New password
                 </label>
@@ -127,7 +127,7 @@ export default function ResetForm() {
                     autoComplete="new-password"
                     {...register("password")}
                     aria-invalid={!!errors.password}
-                    className={`w-full rounded-2xl border px-4 py-2.5 pr-20 text-base outline-none sm:py-3 sm:text-sm transition bg-input/80 ${
+                    className={`w-full rounded-2xl border px-4 py-2.5 md:py-3 pr-20 text-base md:text-lg outline-none lg:py-3 lg:text-sm transition bg-input/80 ${
                       errors.password
                         ? "border-destructive focus:ring-1 focus:ring-destructive"
                         : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
@@ -139,7 +139,7 @@ export default function ResetForm() {
                     onClick={() =>
                       setShowPassword((prev) => !prev)
                     }
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground hover:text-foreground"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground hover:text-foreground md:text-lg lg:text-sm"
                   >
                     {showPassword ? "Hide" : "Show"}
                   </button>
@@ -156,7 +156,7 @@ export default function ResetForm() {
               <div>
                 <label
                   htmlFor="confirmPassword"
-                  className="mb-1 block text-sm font-medium sm:mb-2"
+                  className="mb-1 block text-sm font-medium md:mb-2 md:text-lg lg:text-sm"
                 >
                   Confirm password
                 </label>
@@ -171,7 +171,7 @@ export default function ResetForm() {
                     autoComplete="new-password"
                     {...register("confirmPassword")}
                     aria-invalid={!!errors.confirmPassword}
-                    className={`w-full rounded-2xl border px-4 py-2.5 pr-20 text-base outline-none sm:py-3 sm:text-sm transition bg-input/80 ${
+                    className={`w-full rounded-2xl border px-4 py-2.5 md:py-3 pr-20 text-base md:text-lg outline-none lg:py-3 lg:text-sm transition bg-input/80 ${
                       errors.confirmPassword
                         ? "border-destructive focus:ring-1 focus:ring-destructive"
                         : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
@@ -183,7 +183,7 @@ export default function ResetForm() {
                     onClick={() =>
                       setShowConfirmPassword((prev) => !prev)
                     }
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground hover:text-foreground"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground hover:text-foreground md:text-lg lg:text-sm"
                   >
                     {showConfirmPassword ? "Hide" : "Show"}
                   </button>
@@ -198,14 +198,14 @@ export default function ResetForm() {
 
               {/* Success */}
               {successMessage && (
-                <div className="rounded-2xl border border-emerald-400/40 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-300">
+                <div className="rounded-2xl border border-emerald-400/40 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-300 md:text-lg lg:text-sm">
                   {successMessage}
                 </div>
               )}
 
               {/* Error */}
               {errorMessage && (
-                <div className="rounded-2xl border border-destructive/60 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                <div className="rounded-2xl border border-destructive/60 bg-destructive/10 px-4 py-3 text-sm text-destructive md:text-lg lg:text-sm">
                   {errorMessage}
                 </div>
               )}
@@ -214,7 +214,7 @@ export default function ResetForm() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-2.5 font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:py-3"
+                className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-2.5 md:py-3 md:text-lg font-medium text-primary-foreground lg:text-base transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 lg:py-3"
               >
                 {isLoading ? (
                   <>
@@ -228,10 +228,10 @@ export default function ResetForm() {
             </form>
 
             {/* Back to Login */}
-            <div className="mt-3 text-center sm:mt-5">
+            <div className="mt-3 text-center md:mt-4 lg:mt-5">
               <Link
                 href="/login"
-                className="text-xs font-medium text-muted-foreground hover:text-foreground hover:underline sm:text-sm"
+                className="text-xs font-medium text-muted-foreground hover:text-foreground hover:underline md:text-lg lg:text-sm"
               >
                 ← Back to login
               </Link>

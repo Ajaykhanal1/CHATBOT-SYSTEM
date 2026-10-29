@@ -118,7 +118,7 @@ export default function Dashboard() {
             <button
               onClick={() => setSidebarOpen(true)}
               aria-label="Open menu"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground lg:hidden"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground md:hidden"
             >
               <Menu className="h-5 w-5" />
             </button>
@@ -144,9 +144,9 @@ export default function Dashboard() {
       <main className="flex-1 overflow-y-auto pt-20 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="mx-auto h-full max-w-[1600px] px-3 sm:px-4 lg:px-6">
 
-          <div className="grid h-full gap-3 lg:grid-cols-[280px_1fr]">
+          <div className="grid h-full gap-3 md:grid-cols-[200px_1fr] lg:grid-cols-[280px_1fr]">
             {/* Sidebar */}
-            <aside className="relative hidden overflow-hidden rounded-3xl border border-white/10 bg-card/40 p-2 shadow-2xl backdrop-blur-xl lg:block">
+            <aside className="relative hidden overflow-hidden rounded-3xl border border-white/10 bg-card/40 p-2 shadow-2xl backdrop-blur-xl md:block">
               <div className="absolute -top-20 right-0 h-40 w-40 rounded-full bg-primary/20 blur-3xl" />
               {tabList}
             </aside>
@@ -236,7 +236,7 @@ export default function Dashboard() {
       </main>
 
       {/* Mobile drawer */}
-      <div className={`fixed inset-0 z-[60] lg:hidden ${sidebarOpen ? "" : "pointer-events-none"}`}>
+      <div className={`fixed inset-0 z-[60] md:hidden ${sidebarOpen ? "" : "pointer-events-none"}`}>
         <div
           onClick={() => setSidebarOpen(false)}
           className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
