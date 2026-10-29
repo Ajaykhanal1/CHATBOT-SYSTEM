@@ -59,15 +59,15 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-12 text-foreground sm:px-6 lg:px-8">
+    <div className="flex min-h-[100dvh] items-center justify-center px-4 py-4 text-foreground sm:px-6 sm:py-12 lg:px-8">
       <div className="w-full max-w-md">
-        <div className="card-glow relative overflow-hidden rounded-3xl border border-border/60 bg-card/80 p-8 shadow-2xl backdrop-blur-xl">
+        <div className="card-glow relative overflow-hidden rounded-3xl border border-border/60 bg-card/80 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
           <div className="absolute -top-24 right-0 h-48 w-48 rounded-full bg-primary/20 blur-3xl" />
           <div className="absolute -bottom-28 left-10 h-56 w-56 rounded-full bg-accent/15 blur-3xl" />
 
           <div className="relative">
             {/* Logo */}
-            <div className="mb-8 text-center">
+            <div className="mb-6 text-center sm:mb-8">
               <Link href="/" className="text-glow text-2xl font-bold tracking-tight">
                 MyChat
               </Link>
@@ -75,7 +75,7 @@ export default function RegisterForm() {
 
             {/* Heading */}
             <div className="text-center">
-              <h1 className="text-3xl font-bold tracking-tight">
+              <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
                 Create your account
               </h1>
 
@@ -88,7 +88,7 @@ export default function RegisterForm() {
             <button
               type="button"
               disabled={isLoading}
-              className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl border border-border/80 bg-secondary/60 px-4 py-3 text-sm font-medium transition hover:bg-secondary disabled:opacity-50"
+              className="mt-6 flex w-full items-center justify-center gap-3 sm:mt-8 rounded-2xl border border-border/80 bg-secondary/60 px-4 py-3 text-sm font-medium transition hover:bg-secondary disabled:opacity-50"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
@@ -112,7 +112,7 @@ export default function RegisterForm() {
             </button>
 
             {/* Divider */}
-            <div className="my-7 flex items-center gap-4">
+            <div className="my-5 flex items-center gap-4 sm:my-7">
               <div className="h-px flex-1 bg-border/70" />
 
               <span className="text-xs text-muted-foreground">
@@ -132,7 +132,7 @@ export default function RegisterForm() {
             {/* Form */}
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="space-y-5"
+              className="space-y-4 sm:space-y-5"
               noValidate
             >
               {/* Name */}
@@ -151,7 +151,7 @@ export default function RegisterForm() {
                   autoComplete="name"
                   {...register("name")}
                   aria-invalid={!!errors.name}
-                  className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition bg-input/80 ${errors.name
+                  className={`w-full rounded-2xl border px-4 py-3 text-base outline-none sm:text-sm transition bg-input/80 ${errors.name
                     ? "border-destructive focus:ring-1 focus:ring-destructive"
                     : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
                     }`}
@@ -180,7 +180,7 @@ export default function RegisterForm() {
                   autoComplete="email"
                   {...register("email")}
                   aria-invalid={!!errors.email}
-                  className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition bg-input/80 ${errors.email
+                  className={`w-full rounded-2xl border px-4 py-3 text-base outline-none sm:text-sm transition bg-input/80 ${errors.email
                     ? "border-destructive focus:ring-1 focus:ring-destructive"
                     : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
                     }`}
@@ -210,7 +210,7 @@ export default function RegisterForm() {
                     autoComplete="new-password"
                     {...register("password")}
                     aria-invalid={!!errors.password}
-                    className={`w-full rounded-2xl border px-4 py-3 pr-20 text-sm outline-none transition bg-input/80 ${errors.password
+                    className={`w-full rounded-2xl border px-4 py-3 pr-20 text-base outline-none sm:text-sm transition bg-input/80 ${errors.password
                       ? "border-destructive focus:ring-1 focus:ring-destructive"
                       : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
                       }`}
@@ -281,7 +281,7 @@ export default function RegisterForm() {
             </form>
 
             {/* Login */}
-            <p className="mt-8 text-center text-sm text-muted-foreground">
+            <p className="mt-6 text-center text-sm text-muted-foreground sm:mt-8">
               Already have an account?{" "}
               <Link
                 href="/login"

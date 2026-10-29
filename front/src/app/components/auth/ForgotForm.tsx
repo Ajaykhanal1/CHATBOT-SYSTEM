@@ -56,20 +56,20 @@ export default function ForgotForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-12 text-foreground sm:px-6 lg:px-8">
+    <div className="flex min-h-[100dvh] items-center justify-center px-4 py-4 text-foreground sm:px-6 sm:py-12 lg:px-8">
       <div className="w-full max-w-md">
-        <div className="card-glow relative overflow-hidden rounded-3xl border border-border/60 bg-card/80 p-8 shadow-2xl backdrop-blur-xl">
+        <div className="card-glow relative overflow-hidden rounded-3xl border border-border/60 bg-card/80 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
           <div className="absolute -top-24 right-0 h-48 w-48 rounded-full bg-primary/20 blur-3xl" />
           <div className="absolute -bottom-28 left-10 h-56 w-56 rounded-full bg-accent/15 blur-3xl" />
 
           <div className="relative">
-            <div className="mb-8 flex justify-center">
+            <div className="mb-6 flex justify-center sm:mb-8">
               <Link href="/" className="text-glow text-2xl font-bold tracking-tight">
                 MyChat
               </Link>
             </div>
 
-            <div className="mb-8 text-center">
+            <div className="mb-6 text-center sm:mb-8">
               <h1 className="text-2xl font-semibold tracking-tight">
                 Forgot your password?
               </h1>
@@ -82,7 +82,7 @@ export default function ForgotForm() {
 
             <form
               onSubmit={handleSubmit(onSubmit)}
-              className="space-y-5"
+              className="space-y-4 sm:space-y-5"
               noValidate
             >
               <div>
@@ -100,7 +100,7 @@ export default function ForgotForm() {
                   autoComplete="email"
                   {...register("email")}
                   aria-invalid={!!errors.email}
-                  className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition bg-input/80 ${
+                  className={`w-full rounded-2xl border px-4 py-3 text-base outline-none sm:text-sm transition bg-input/80 ${
                     errors.email
                       ? "border-destructive focus:ring-1 focus:ring-destructive"
                       : "border-border/80 focus:border-primary focus:ring-1 focus:ring-primary/60"
@@ -142,7 +142,7 @@ export default function ForgotForm() {
               </button>
             </form>
 
-            <div className="mt-6 text-center">
+            <div className="mt-5 text-center sm:mt-6">
               <Link
                 href="/login"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground hover:underline"
