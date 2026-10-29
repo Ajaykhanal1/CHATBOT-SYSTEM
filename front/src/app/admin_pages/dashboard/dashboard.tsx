@@ -108,12 +108,12 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      <main className="flex-1 overflow-y-auto pt-16 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <div className="mx-auto max-w-[1600px] px-3 sm:px-4 lg:px-6">
+      <main className="flex-1 overflow-y-auto pt-20 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="mx-auto h-full max-w-[1600px] px-3 sm:px-4 lg:px-6">
 
-          <div className="grid gap-3 lg:grid-cols-[280px_1fr]">
+          <div className="grid h-full gap-3 lg:grid-cols-[280px_1fr]">
             {/* Sidebar */}
-            <aside className="relative h-fit overflow-hidden rounded-3xl border border-white/10 bg-card/40 p-2 shadow-2xl backdrop-blur-xl">
+            <aside className="relative overflow-hidden rounded-3xl border border-white/10 bg-card/40 p-2 shadow-2xl backdrop-blur-xl">
               <div className="absolute -top-20 right-0 h-40 w-40 rounded-full bg-primary/20 blur-3xl" />
               <div className="relative space-y-1 p-1.5">
                 {tabs.map((tab) => (
@@ -134,10 +134,10 @@ export default function Dashboard() {
             </aside>
 
             {/* Main Content */}
-            <div>
-              <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-card/40 p-6 shadow-2xl backdrop-blur-xl">
+            <div className="h-full">
+              <div className="relative h-full overflow-hidden rounded-3xl border border-white/10 bg-card/40 p-6 shadow-2xl backdrop-blur-xl">
                 <div className="absolute -top-24 right-0 h-48 w-48 rounded-full bg-primary/15 blur-3xl" />
-                <div className="relative">
+                <div className="relative flex h-full flex-col overflow-y-auto">
                   {activeTab === "students" && <Student />}
                   {activeTab === "teachers" && <Teacher />}
                   {activeTab === "courses" && <Course />}
@@ -145,7 +145,7 @@ export default function Dashboard() {
                   {activeTab === "notices" && <Notice />}
                   {activeTab === "knowledge" && (
                     <>
-                      <div className="mb-6">
+                      <div className="mb-5 shrink-0">
                         <h3 className="text-xl font-semibold tracking-tight sm:text-2xl">
                           <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
                             Knowledge Base
@@ -156,44 +156,58 @@ export default function Dashboard() {
                         </p>
                       </div>
 
-                      <label className="group mb-4 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/10 p-8 transition-all hover:border-primary/40 hover:bg-white/5">
-                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-primary/20 to-accent/20">
-                          <span className="text-2xl">📄</span>
+                      <div className="flex flex-1 flex-col gap-4 lg:flex-row">
+                        <label className="group flex min-h-[240px] flex-1 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/10 p-8 text-center transition-all hover:border-primary/40 hover:bg-white/5">
+                          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-primary/20 to-accent/20">
+                            <span className="text-2xl">📄</span>
+                          </div>
+                          <span className="mb-1 text-sm font-medium">
+                            {file ? file.name : "Drop PDF here or click to browse"}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            PDF files only
+                          </span>
+
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="application/pdf"
+                            className="hidden"
+                            onChange={(e) => {
+                              setFile(e.target.files?.[0] || null);
+                            }}
+                          />
+                        </label>
+
+                        <div className="flex w-full flex-col gap-3 lg:w-72">
+                          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                            <p className="text-sm font-medium">How it works</p>
+                            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                              Upload a PDF and its contents are indexed so the
+                              chatbot can answer questions from it.
+                            </p>
+                          </div>
+
+                          <div className="mt-auto flex flex-col gap-3">
+                            {message && (
+                              <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-center text-sm">
+                                {message}
+                              </div>
+                            )}
+
+                            <button
+                              onClick={uploadPDF}
+                              disabled={!file}
+                              className="group relative w-full overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50 disabled:hover:shadow-none"
+                            >
+                              <span className="relative z-10">
+                                {file ? "Upload PDF" : "Select a file first"}
+                              </span>
+                              <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-700 group-hover:translate-x-full" />
+                            </button>
+                          </div>
                         </div>
-                        <span className="mb-1 text-sm font-medium">
-                          {file ? file.name : "Drop PDF here or click to browse"}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          PDF files only
-                        </span>
-
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept="application/pdf"
-                          className="hidden"
-                          onChange={(e) => {
-                            setFile(e.target.files?.[0] || null);
-                          }}
-                        />
-                      </label>
-
-                      <button
-                        onClick={uploadPDF}
-                        disabled={!file}
-                        className="group relative w-full overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50 disabled:hover:shadow-none"
-                      >
-                        <span className="relative z-10">
-                          {file ? "Upload PDF" : "Select a file first"}
-                        </span>
-                        <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-700 group-hover:translate-x-full" />
-                      </button>
-
-                      {message && (
-                        <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-3 text-center text-sm">
-                          {message}
-                        </div>
-                      )}
+                      </div>
                     </>
                   )}
                 </div>

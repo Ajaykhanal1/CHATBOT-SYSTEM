@@ -81,7 +81,7 @@ export default function Teacher() {
     "h-9 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30";
 
   return (
-    <div>
+    <div className="flex flex-1 flex-col">
       <div className="mb-6">
         <h3 className="text-xl font-semibold tracking-tight sm:text-2xl">
           <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
@@ -93,7 +93,7 @@ export default function Teacher() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
         <FieldGroup className="grid gap-4 sm:grid-cols-2">
           {/* Name */}
           <Field>
@@ -179,19 +179,21 @@ export default function Teacher() {
           </Field>
         </FieldGroup>
 
-        {message && (
-          <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-3 text-center text-sm">
-            {message}
-          </div>
-        )}
+        <div className="mt-auto space-y-4 pt-4">
+          {message && (
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-center text-sm">
+              {message}
+            </div>
+          )}
 
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className="mt-4 w-full rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50"
-        >
-          {isLoading ? "Adding..." : "Add Teacher"}
-        </Button>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="w-full rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50"
+          >
+            {isLoading ? "Adding..." : "Add Teacher"}
+          </Button>
+        </div>
       </form>
     </div>
   );

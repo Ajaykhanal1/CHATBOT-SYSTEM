@@ -47,7 +47,7 @@ export default function Notice() {
   };
 
   return (
-    <div>
+    <div className="flex flex-1 flex-col">
       <div className="mb-6">
         <h3 className="text-xl font-semibold tracking-tight sm:text-2xl">
           <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
@@ -59,7 +59,7 @@ export default function Notice() {
         </p>
       </div>
 
-      <form onSubmit={addNotice}>
+      <form onSubmit={addNotice} className="flex flex-1 flex-col">
         <FieldGroup className="grid gap-4">
           {/* Title */}
           <Field>
@@ -90,19 +90,21 @@ export default function Notice() {
           </Field>
         </FieldGroup>
 
-        {message && (
-          <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-3 text-center text-sm">
-            {message}
-          </div>
-        )}
+        <div className="mt-auto space-y-4 pt-4">
+          {message && (
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-center text-sm">
+              {message}
+            </div>
+          )}
 
-        <Button
-          type="submit"
-          disabled={loading}
-          className="mt-4 w-full rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50"
-        >
-          {loading ? "Adding..." : "Add Notice"}
-        </Button>
+          <Button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50"
+          >
+            {loading ? "Adding..." : "Add Notice"}
+          </Button>
+        </div>
       </form>
     </div>
   );
