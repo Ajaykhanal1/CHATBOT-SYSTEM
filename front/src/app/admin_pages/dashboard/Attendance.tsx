@@ -4,16 +4,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -91,8 +81,7 @@ export default function Attendance() {
       });
 
       setMessage(
-        response.data.message ||
-          "Attendance added successfully"
+        response.data.message || "Attendance added successfully"
       );
 
       // Reset form
@@ -105,8 +94,7 @@ export default function Attendance() {
 
       if (axios.isAxiosError(error)) {
         setMessage(
-          error.response?.data?.message ||
-            "Failed to add attendance"
+          error.response?.data?.message || "Failed to add attendance"
         );
       } else {
         setMessage("Failed to add attendance");
@@ -116,189 +104,128 @@ export default function Attendance() {
     }
   };
 
+  const selectClass =
+    "h-9 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30";
+
   return (
-    <div className="mb-3 rounded-lg border bg-white p-3 shadow-sm">
-      <h2 className="text-lg font-semibold">
-        📊 Attendance
-      </h2>
+    <div>
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold tracking-tight sm:text-2xl">
+          <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+            Add Attendance
+          </span>
+        </h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Select faculty, semester and student
+        </p>
+      </div>
 
-      <div className="mt-2 flex flex-wrap gap-2">
-        <Dialog>
-          <DialogTrigger
-            render={
-              <Button className="rounded-md bg-black px-3 py-1.5 text-sm text-white">
-                Add Attendance
-              </Button>
-            }
-          />
+      <form onSubmit={handleSubmit}>
+        <FieldGroup className="grid gap-4 sm:grid-cols-2">
+          {/* Faculty */}
+          <Field>
+            <Label htmlFor="faculty">Faculty</Label>
 
-          <DialogContent className="sm:max-w-sm">
-            <form onSubmit={handleSubmit}>
-              <DialogHeader>
-                <DialogTitle>
-                  Add Attendance
-                </DialogTitle>
+            <select
+              id="faculty"
+              value={faculty}
+              onChange={handleFacultyChange}
+              required
+              className={selectClass}
+            >
+              <option value="">Select Faculty</option>
 
-                <DialogDescription>
-                  Select faculty, semester and student.
-                </DialogDescription>
-              </DialogHeader>
+              <option value="BCA">BCA</option>
+              <option value="BIM">BIM</option>
+              <option value="BBA">BBA</option>
+              <option value="CSIT">CSIT</option>
+              <option value="BBM">BBM</option>
+            </select>
+          </Field>
 
-              <FieldGroup className="mt-4">
-                {/* Faculty */}
-                <Field>
-                  <Label htmlFor="faculty">
-                    Faculty
-                  </Label>
+          {/* Semester */}
+          <Field>
+            <Label htmlFor="semester">Semester</Label>
 
-                  <select
-                    id="faculty"
-                    value={faculty}
-                    onChange={handleFacultyChange}
-                    required
-                    className="h-9 w-full rounded-md border bg-white px-3 text-sm"
-                  >
-                    <option value="">
-                      Select Faculty
-                    </option>
+            <select
+              id="semester"
+              value={semester}
+              onChange={handleSemesterChange}
+              disabled={!faculty}
+              required
+              className={selectClass}
+            >
+              <option value="">
+                {faculty ? "Select Semester" : "Select Faculty First"}
+              </option>
 
-                    <option value="BCA">BCA</option>
-                    <option value="BIM">BIM</option>
-                    <option value="BBA">BBA</option>
-                    <option value="CSIT">CSIT</option>
-                    <option value="BBM">BBM</option>
-                  </select>
-                </Field>
+              {Array.from({ length: 8 }, (_, index) => (
+                <option key={index + 1} value={index + 1}>
+                  Semester {index + 1}
+                </option>
+              ))}
+            </select>
+          </Field>
 
-                {/* Semester */}
-                <Field>
-                  <Label htmlFor="semester">
-                    Semester
-                  </Label>
+          {/* Student */}
+          <Field>
+            <Label htmlFor="student">Student</Label>
 
-                  <select
-                    id="semester"
-                    value={semester}
-                    onChange={handleSemesterChange}
-                    disabled={!faculty}
-                    required
-                    className="h-9 w-full rounded-md border bg-white px-3 text-sm disabled:bg-gray-100"
-                  >
-                    <option value="">
-                      {faculty
-                        ? "Select Semester"
-                        : "Select Faculty First"}
-                    </option>
+            <select
+              id="student"
+              value={student}
+              onChange={(e) => setStudent(e.target.value)}
+              disabled={!semester}
+              required
+              className={selectClass}
+            >
+              <option value="">
+                {semester ? "Select Student" : "Select Semester First"}
+              </option>
 
-                    {Array.from(
-                      { length: 8 },
-                      (_, index) => (
-                        <option
-                          key={index + 1}
-                          value={index + 1}
-                        >
-                          Semester {index + 1}
-                        </option>
-                      )
-                    )}
-                  </select>
-                </Field>
+              {filteredStudents.map((item) => (
+                <option key={item._id} value={item._id}>
+                  {item.name} - {item.rollNumber}
+                </option>
+              ))}
+            </select>
+          </Field>
 
-                {/* Student */}
-                <Field>
-                  <Label htmlFor="student">
-                    Student
-                  </Label>
+          {/* Attendance Percentage */}
+          <Field>
+            <Label htmlFor="percentage">
+              Attendance Percentage
+            </Label>
 
-                  <select
-                    id="student"
-                    value={student}
-                    onChange={(e) =>
-                      setStudent(e.target.value)
-                    }
-                    disabled={!semester}
-                    required
-                    className="h-9 w-full rounded-md border bg-white px-3 text-sm disabled:bg-gray-100"
-                  >
-                    <option value="">
-                      {semester
-                        ? "Select Student"
-                        : "Select Semester First"}
-                    </option>
+            <Input
+              id="percentage"
+              type="number"
+              placeholder="Enter percentage"
+              min={0}
+              max={100}
+              step={0.01}
+              value={percentage}
+              onChange={(e) => setPercentage(e.target.value)}
+              required
+            />
+          </Field>
+        </FieldGroup>
 
-                    {filteredStudents.map((item) => (
-                      <option
-                        key={item._id}
-                        value={item._id}
-                      >
-                        {item.name} - {item.rollNumber}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
-
-                {/* Attendance Percentage */}
-                <Field>
-                  <Label htmlFor="percentage">
-                    Attendance Percentage
-                  </Label>
-
-                  <Input
-                    id="percentage"
-                    type="number"
-                    placeholder="Enter percentage"
-                    min={0}
-                    max={100}
-                    step={0.01}
-                    value={percentage}
-                    onChange={(e) =>
-                      setPercentage(e.target.value)
-                    }
-                    required
-                  />
-                </Field>
-              </FieldGroup>
-
-              {/* Message */}
-              {message && (
-                <p className="mt-3 rounded-md bg-gray-50 p-2 text-center text-sm">
-                  {message}
-                </p>
-              )}
-
-              <DialogFooter className="mt-4">
-                <DialogClose
-                  render={
-                    <Button
-                      type="button"
-                      variant="outline"
-                    >
-                      Cancel
-                    </Button>
-                  }
-                />
-
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                >
-                  {isLoading
-                    ? "Adding..."
-                    : "Add Attendance"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+        {/* Message */}
+        {message && (
+          <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-3 text-center text-sm">
+            {message}
+          </div>
+        )}
 
         <Button
-          type="button"
-          variant="outline"
-          className="rounded-md px-3 py-1.5 text-sm"
+          type="submit"
+          disabled={isLoading}
+          className="mt-4 w-full rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50"
         >
-          Attendance List
+          {isLoading ? "Adding..." : "Add Attendance"}
         </Button>
-      </div>
+      </form>
     </div>
   );
 }

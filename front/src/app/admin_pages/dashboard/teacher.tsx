@@ -4,16 +4,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -87,160 +77,122 @@ export default function Teacher() {
     }
   };
 
+  const selectClass =
+    "h-9 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30";
+
   return (
-    <div className="mb-3 rounded-lg border bg-white p-3 shadow-sm">
-      <h2 className="text-lg font-semibold">👨‍🏫 Teachers</h2>
+    <div>
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold tracking-tight sm:text-2xl">
+          <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+            Add Teacher
+          </span>
+        </h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Enter all teacher information
+        </p>
+      </div>
 
-      <div className="mt-2 flex flex-wrap gap-2">
-        <Dialog>
-          <DialogTrigger
-            render={
-              <Button className="rounded-md bg-black px-3 py-1.5 text-sm text-white">
-                Add Teacher
-              </Button>
-            }
-          />
+      <form onSubmit={handleSubmit}>
+        <FieldGroup className="grid gap-4 sm:grid-cols-2">
+          {/* Name */}
+          <Field>
+            <Label htmlFor="teacher-name">Name</Label>
 
-          <DialogContent className="sm:max-w-sm">
-            <form onSubmit={handleSubmit}>
-              <DialogHeader>
-                <DialogTitle>Add Teacher</DialogTitle>
+            <Input
+              id="teacher-name"
+              type="text"
+              placeholder="Enter teacher name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              minLength={2}
+              required
+            />
+          </Field>
 
-                <DialogDescription>
-                  Enter all teacher information.
-                </DialogDescription>
-              </DialogHeader>
+          {/* Email */}
+          <Field>
+            <Label htmlFor="teacher-email">Email</Label>
 
-              <FieldGroup className="mt-4">
-                {/* Name */}
-                <Field>
-                  <Label htmlFor="teacher-name">Name</Label>
+            <Input
+              id="teacher-email"
+              type="email"
+              placeholder="teacher@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </Field>
 
-                  <Input
-                    id="teacher-name"
-                    type="text"
-                    placeholder="Enter teacher name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    minLength={2}
-                    required
-                  />
-                </Field>
+          {/* Faculty */}
+          <Field>
+            <Label htmlFor="faculty">Faculty</Label>
 
-                {/* Email */}
-                <Field>
-                  <Label htmlFor="teacher-email">Email</Label>
+            <select
+              id="faculty"
+              value={faculty}
+              onChange={(e) => {
+                setFaculty(e.target.value);
+                setCourses([]);
+              }}
+              required
+              className={selectClass}
+            >
+              <option value="">Select Faculty</option>
 
-                  <Input
-                    id="teacher-email"
-                    type="email"
-                    placeholder="teacher@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </Field>
+              <option value="BCA">BCA</option>
 
-                {/* Faculty */}
-                <Field>
-                  <Label htmlFor="faculty">Faculty</Label>
+              <option value="BIM">BIM</option>
 
-                  <select
-                    id="faculty"
-                    value={faculty}
-                    onChange={(e) => {
-                      setFaculty(e.target.value);
-                      setCourses([]);
-                    }}
-                    required
-                    className="h-9 w-full rounded-md border bg-white px-3 text-sm"
-                  >
-                    <option value="">Select Faculty</option>
+              <option value="BBA">BBA</option>
 
-                    <option value="BCA">
-                      BCA
-                    </option>
+              <option value="CSIT">CSIT</option>
 
-                    <option value="BIM">
-                      BIM
-                    </option>
+              <option value="BBM">BBM</option>
+            </select>
+          </Field>
 
-                    <option value="BBA">
-                      BBA
-                    </option>
+          {/* Course */}
+          <Field>
+            <Label htmlFor="courses">Course</Label>
 
-                    <option value="CSIT">
-                      CSIT
-                    </option>
+            <select
+              id="courses"
+              value={courses[0] || ""}
+              onChange={(e) => {
+                setCourses(e.target.value ? [e.target.value] : []);
+              }}
+              disabled={!faculty}
+              required
+              className={selectClass}
+            >
+              <option value="">
+                {faculty ? "Select Course" : "Select Faculty First"}
+              </option>
 
-                    <option value="BBM">
-                      BBM
-                    </option>
-                  </select>
-                </Field>
+              {filteredCourses.map((course) => (
+                <option key={course._id} value={course._id}>
+                  {course.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </FieldGroup>
 
-                {/* Course */}
-                <Field>
-                  <Label htmlFor="courses">Course</Label>
-
-                  <select
-                    id="courses"
-                    value={courses[0] || ""}
-                    onChange={(e) => {
-                      setCourses(
-                        e.target.value ? [e.target.value] : []
-                      );
-                    }}
-                    disabled={!faculty}
-                    required
-                    className="h-9 w-full rounded-md border bg-white px-3 text-sm disabled:bg-gray-100"
-                  >
-                    <option value="">
-                      {faculty
-                        ? "Select Course"
-                        : "Select Faculty First"}
-                    </option>
-
-                    {filteredCourses.map((course) => (
-                      <option key={course._id} value={course._id}>
-                        {course.name}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
-              </FieldGroup>
-
-              {message && (
-                <p className="mt-3 rounded-md bg-gray-50 p-2 text-center text-sm">
-                  {message}
-                </p>
-              )}
-
-              <DialogFooter className="mt-4">
-                <DialogClose
-                  render={
-                    <Button type="button" variant="outline">
-                      Cancel
-                    </Button>
-                  }
-                />
-
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading ? "Adding..." : "Add Teacher"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+        {message && (
+          <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-3 text-center text-sm">
+            {message}
+          </div>
+        )}
 
         <Button
-          type="button"
-          variant="outline"
-          className="rounded-md px-3 py-1.5 text-sm"
+          type="submit"
+          disabled={isLoading}
+          className="mt-4 w-full rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50"
         >
-          Teacher List
+          {isLoading ? "Adding..." : "Add Teacher"}
         </Button>
-      </div>
+      </form>
     </div>
   );
 }
