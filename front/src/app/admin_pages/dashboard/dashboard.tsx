@@ -83,7 +83,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
+    <div className="relative flex h-screen flex-col overflow-hidden bg-background text-foreground">
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[880px] bg-noise" />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[880px] bg-grid opacity-30" />
       
@@ -108,7 +108,7 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      <main className="pt-16 pb-4">
+      <main className="flex-1 overflow-y-auto pt-16 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="mx-auto max-w-[1600px] px-3 sm:px-4 lg:px-6">
 
           <div className="grid gap-3 lg:grid-cols-[280px_1fr]">

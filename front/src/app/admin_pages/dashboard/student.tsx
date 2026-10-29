@@ -6,18 +6,6 @@ import axios from "axios";
 import { api } from "@/lib/axios/axios";
 
 import { Button } from "@/components/ui/button";
-
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -105,273 +93,190 @@ export default function Student() {
         }
     };
 
+    const selectClass =
+        "h-9 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30";
+
     return (
-        <div className="mb-3 rounded-lg border bg-white p-3 shadow-sm">
-            <h2 className="text-lg font-semibold">
-                👨‍🎓 Students
-            </h2>
-
-            <div className="mt-2 flex flex-wrap gap-2">
-                <Dialog>
-                    <DialogTrigger
-                        render={
-                            <Button className="rounded-md bg-black px-3 py-1.5 text-sm text-white">
-                                Add Student
-                            </Button>
-                        }
-                    />
-
-                    <DialogContent className="sm:max-w-sm">
-                        <form onSubmit={addStudent}>
-                            <DialogHeader>
-                                <DialogTitle>
-                                    Add Student
-                                </DialogTitle>
-
-                                <DialogDescription>
-                                    Enter all student information.
-                                </DialogDescription>
-                            </DialogHeader>
-
-                            <FieldGroup>
-                                {/* Name */}
-                                <Field>
-                                    <Label htmlFor="name">
-                                        Name
-                                    </Label>
-
-                                    <Input
-                                        id="name"
-                                        name="name"
-                                        type="text"
-                                        placeholder="Enter student name"
-                                        minLength={2}
-                                        required
-                                    />
-                                </Field>
-
-                                {/* Email */}
-                                <Field>
-                                    <Label htmlFor="email">
-                                        Email
-                                    </Label>
-
-                                    <Input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        placeholder="student@example.com"
-                                        required
-                                    />
-                                </Field>
-
-                                {/* Roll Number */}
-                                <Field>
-                                    <Label htmlFor="rollNumber">
-                                        Roll Number
-                                    </Label>
-
-                                    <Input
-                                        id="rollNumber"
-                                        name="rollNumber"
-                                        type="text"
-                                        placeholder="Enter roll number"
-                                        required
-                                    />
-                                </Field>
-
-                                {/* Semester */}
-                                <Field>
-                                    <Label htmlFor="semester">
-                                        Semester
-                                    </Label>
-
-                                    <select
-                                        id="semester"
-                                        name="semester"
-                                        value={semester}
-                                        onChange={(e) =>
-                                            setSemester(
-                                                e.target.value
-                                            )
-                                        }
-                                        className="w-full rounded-md border px-3 py-2 text-sm"
-                                        required
-                                    >
-                                        <option value="">
-                                            Select Semester
-                                        </option>
-
-                                        <option value="1">
-                                            Semester 1
-                                        </option>
-
-                                        <option value="2">
-                                            Semester 2
-                                        </option>
-
-                                        <option value="3">
-                                            Semester 3
-                                        </option>
-
-                                        <option value="4">
-                                            Semester 4
-                                        </option>
-
-                                        <option value="5">
-                                            Semester 5
-                                        </option>
-
-                                        <option value="6">
-                                            Semester 6
-                                        </option>
-
-                                        <option value="7">
-                                            Semester 7
-                                        </option>
-
-                                        <option value="8">
-                                            Semester 8
-                                        </option>
-                                    </select>
-                                </Field>
-
-                                {/* GPA */}
-                                <Field>
-                                    <Label htmlFor="gpa">
-                                        GPA
-                                    </Label>
-
-                                    <Input
-                                        id="gpa"
-                                        name="gpa"
-                                        type="number"
-                                        min={0}
-                                        max={4}
-                                        step={0.01}
-                                        placeholder="Enter GPA (0-4)"
-                                        required
-                                    />
-                                </Field>
-
-                                {/* Faculty */}
-                                <Field>
-                                    <Label htmlFor="faculty">
-                                        Faculty
-                                    </Label>
-
-                                    <select
-                                        id="faculty"
-                                        name="faculty"
-                                        value={faculty}
-                                        onChange={(e) =>
-                                            setFaculty(
-                                                e.target.value
-                                            )
-                                        }
-                                        className="w-full rounded-md border px-3 py-2 text-sm"
-                                        required
-                                    >
-                                        <option value="">
-                                            Select Faculty
-                                        </option>
-
-                                        <option value="BCA">
-                                            BCA
-                                        </option>
-
-                                        <option value="BSc CSIT">
-                                            BSc CSIT
-                                        </option>
-
-                                        <option value="BIT">
-                                            BIT
-                                        </option>
-
-                                        <option value="BIM">
-                                            BIM
-                                        </option>
-
-                                        <option value="BBA">
-                                            BBA
-                                        </option>
-                                    </select>
-                                </Field>
-
-                                {/* Course */}
-                                <Field>
-                                    <Label htmlFor="courses">
-                                        Course
-                                    </Label>
-
-                                    <select
-                                        id="courses"
-                                        name="courses"
-                                        className="w-full rounded-md border px-3 py-2 text-sm"
-                                        required
-                                        disabled={
-                                            !faculty ||
-                                            !semester
-                                        }
-                                    >
-                                        <option value="">
-                                            {!faculty
-                                                ? "Select Faculty First"
-                                                : !semester
-                                                ? "Select Semester First"
-                                                : "Select Course"}
-                                        </option>
-
-                                        {filteredCourses.map(
-                                            (course) => (
-                                                <option
-                                                    key={course._id}
-                                                    value={course._id}
-                                                >
-                                                    {course.name}
-                                                </option>
-                                            )
-                                        )}
-                                    </select>
-                                </Field>
-                            </FieldGroup>
-
-                            {/* Message */}
-                            {message && (
-                                <p className="mt-3 rounded-md bg-gray-100 p-2 text-center text-sm">
-                                    {message}
-                                </p>
-                            )}
-
-                            <DialogFooter className="mt-4">
-                                <DialogClose
-                                    render={
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                        >
-                                            Cancel
-                                        </Button>
-                                    }
-                                />
-
-                                <Button
-                                    type="submit"
-                                    disabled={loading}
-                                >
-                                    {loading
-                                        ? "Adding..."
-                                        : "Add Student"}
-                                </Button>
-                            </DialogFooter>
-                        </form>
-                    </DialogContent>
-                </Dialog>
-
-                <button className="rounded-md border px-3 py-1.5 text-sm">
-                    Student List
-                </button>
+        <div>
+            <div className="mb-6">
+                <h3 className="text-xl font-semibold tracking-tight sm:text-2xl">
+                    <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                        Add Student
+                    </span>
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    Enter all student information
+                </p>
             </div>
+
+            <form onSubmit={addStudent}>
+                <FieldGroup className="grid gap-4 sm:grid-cols-2">
+                    {/* Name */}
+                    <Field>
+                        <Label htmlFor="name">Name</Label>
+
+                        <Input
+                            id="name"
+                            name="name"
+                            type="text"
+                            placeholder="Enter student name"
+                            minLength={2}
+                            required
+                        />
+                    </Field>
+
+                    {/* Email */}
+                    <Field>
+                        <Label htmlFor="email">Email</Label>
+
+                        <Input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="student@example.com"
+                            required
+                        />
+                    </Field>
+
+                    {/* Roll Number */}
+                    <Field>
+                        <Label htmlFor="rollNumber">
+                            Roll Number
+                        </Label>
+
+                        <Input
+                            id="rollNumber"
+                            name="rollNumber"
+                            type="text"
+                            placeholder="Enter roll number"
+                            required
+                        />
+                    </Field>
+
+                    {/* Semester */}
+                    <Field>
+                        <Label htmlFor="semester">Semester</Label>
+
+                        <select
+                            id="semester"
+                            name="semester"
+                            value={semester}
+                            onChange={(e) =>
+                                setSemester(e.target.value)
+                            }
+                            className={selectClass}
+                            required
+                        >
+                            <option value="">Select Semester</option>
+
+                            <option value="1">Semester 1</option>
+
+                            <option value="2">Semester 2</option>
+
+                            <option value="3">Semester 3</option>
+
+                            <option value="4">Semester 4</option>
+
+                            <option value="5">Semester 5</option>
+
+                            <option value="6">Semester 6</option>
+
+                            <option value="7">Semester 7</option>
+
+                            <option value="8">Semester 8</option>
+                        </select>
+                    </Field>
+
+                    {/* GPA */}
+                    <Field>
+                        <Label htmlFor="gpa">GPA</Label>
+
+                        <Input
+                            id="gpa"
+                            name="gpa"
+                            type="number"
+                            min={0}
+                            max={4}
+                            step={0.01}
+                            placeholder="Enter GPA (0-4)"
+                            required
+                        />
+                    </Field>
+
+                    {/* Faculty */}
+                    <Field>
+                        <Label htmlFor="faculty">Faculty</Label>
+
+                        <select
+                            id="faculty"
+                            name="faculty"
+                            value={faculty}
+                            onChange={(e) =>
+                                setFaculty(e.target.value)
+                            }
+                            className={selectClass}
+                            required
+                        >
+                            <option value="">Select Faculty</option>
+
+                            <option value="BCA">BCA</option>
+
+                            <option value="BSc CSIT">BSc CSIT</option>
+
+                            <option value="BIT">BIT</option>
+
+                            <option value="BIM">BIM</option>
+
+                            <option value="BBA">BBA</option>
+                        </select>
+                    </Field>
+
+                    {/* Course */}
+                    <Field className="sm:col-span-2">
+                        <Label htmlFor="courses">Course</Label>
+
+                        <select
+                            id="courses"
+                            name="courses"
+                            className={selectClass}
+                            required
+                            disabled={!faculty || !semester}
+                        >
+                            <option value="">
+                                {!faculty
+                                    ? "Select Faculty First"
+                                    : !semester
+                                    ? "Select Semester First"
+                                    : "Select Course"}
+                            </option>
+
+                            {filteredCourses.map((course) => (
+                                <option
+                                    key={course._id}
+                                    value={course._id}
+                                >
+                                    {course.name}
+                                </option>
+                            ))}
+                        </select>
+                    </Field>
+                </FieldGroup>
+
+                {/* Message */}
+                {message && (
+                    <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-3 text-center text-sm">
+                        {message}
+                    </div>
+                )}
+
+                <Button
+                    type="submit"
+                    disabled={loading}
+                    className="mt-4 w-full rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 font-medium text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50"
+                >
+                    {loading ? "Adding..." : "Add Student"}
+                </Button>
+            </form>
         </div>
     );
 }
