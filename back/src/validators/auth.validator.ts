@@ -31,8 +31,7 @@ export const loginSchema = z.object({
   email: z
     .string()
     .trim()
-    .email("Invalid email address")
-    .transform((email) => email.toLowerCase()),
+    .transform((v) => v.toLowerCase()),
 
   password: z
     .string()

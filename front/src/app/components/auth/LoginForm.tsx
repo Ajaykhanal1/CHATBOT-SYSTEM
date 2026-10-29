@@ -189,20 +189,20 @@ export default function LoginForm() {
               className="space-y-5"
               noValidate
             >
-              {/* Email */}
+              {/* Email/Username */}
               <div>
                 <label
                   htmlFor="email"
                   className="mb-2 block text-sm font-medium"
                 >
-                  Email
+                  Email or Username
                 </label>
 
                 <input
                   id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  autoComplete="email"
+                  type="text"
+                  placeholder="you@example.com or admin"
+                  autoComplete="username"
                   {...register("email")}
                   aria-invalid={!!errors.email}
                   className={`w-full rounded-2xl border px-4 py-3 text-sm outline-none transition bg-input/80 ${errors.email

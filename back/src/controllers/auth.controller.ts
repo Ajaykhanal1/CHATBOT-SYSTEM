@@ -188,9 +188,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const data = loginSchema.parse(req.body);
 
-    // Find user and include password
+    // Find user and include password (allow email or username)
+    const identifier = (data.email || "").toLowerCase();
     const user = await User.findOne({
-      email: data.email,
+      $or: [{ email: identifier }, { name: identifier }],
     }).select("+password");
 
     if (!user) {
