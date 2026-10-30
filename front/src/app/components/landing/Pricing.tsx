@@ -6,6 +6,7 @@ const plans = [
     description: "For trying out the platform.",
     features: ["Basic AI conversations", "Limited messages", "Chat history", "Basic models"],
     button: "Get Started",
+    href: "/chat",
     popular: false,
   },
   {
@@ -15,6 +16,7 @@ const plans = [
     description: "For students, developers and professionals.",
     features: ["More AI messages", "Advanced AI models", "Document uploads", "Image generation", "Web search", "Priority access"],
     button: "Start Pro",
+    href: "/register",
     popular: true,
   },
   {
@@ -24,6 +26,7 @@ const plans = [
     description: "For teams building with AI.",
     features: ["Everything in Pro", "Higher usage limits", "Team workspace", "Advanced administration", "Priority support", "API access"],
     button: "Choose Business",
+    href: "/register",
     popular: false,
   },
 ];
@@ -67,7 +70,7 @@ export default function Pricing() {
                   {plan.period && <span className="mb-0.5 text-[10px] text-muted-foreground sm:mb-2 sm:text-sm">{plan.period}</span>}
                 </div>
                 <a
-                  href="/register"
+                  href={plan.href || "/register"}
                   className={`mt-3 inline-flex w-full items-center justify-center rounded-full px-3 py-2 text-xs font-medium transition-all sm:mt-6 sm:px-6 sm:py-3 sm:text-sm lg:mt-8 ${
                     plan.popular
                       ? "bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-primary/40"
