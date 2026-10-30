@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/app/store/authStore";
+import { api } from "@/lib/axios/axios";
+import type { ActiveAccess } from "@/app/components/payments/types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +23,22 @@ export default function Profile() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const [access, setAccess] = useState<ActiveAccess | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    api
+      .get<ActiveAccess>("/payments/access")
+      .then((response) => {
+        if (active) setAccess(response.data);
+      })
+      .catch(() => undefined);
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -107,18 +126,36 @@ export default function Profile() {
                 <p className="mt-0.5 text-xs text-muted-foreground">Your current subscription</p>
                 <div className="mt-3 flex items-end justify-between">
                   <div>
-                    <p className="text-lg font-semibold">Free</p>
-                    <p className="text-xs text-muted-foreground">Basic access to all models</p>
+                    <p className="text-lg font-semibold">{access?.planName || "Free"}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {access?.expiresAt
+                        ? `Active until ${new Date(access.expiresAt).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}`
+                        : "Basic access to all models"}
+                    </p>
                   </div>
                   <span className="rounded-md border border-border px-2 py-0.5 text-xs text-muted-foreground">
-                    Active
+                    {access && access.plan !== "free" ? "Active" : "Free"}
                   </span>
                 </div>
                 <Link
-                  href="/#pricing"
+                  href={
+                    access?.plan === "business"
+                      ? "/chat"
+                      : access?.plan === "pro"
+                        ? "/payment?plan=business"
+                        : "/payment?plan=pro"
+                  }
                   className="mt-3 inline-flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground transition-opacity hover:opacity-90"
                 >
-                  Upgrade Plan
+                  {access?.plan === "business"
+                    ? "Go to Chat"
+                    : access?.plan === "pro"
+                      ? "Upgrade to Business"
+                      : "Upgrade Plan"}
                 </Link>
               </div>
             </div>
