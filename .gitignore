@@ -1,7 +1,5 @@
 back/.env
 
-front/.env.local
-
 front/src/.env
 
 Hello 

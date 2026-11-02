@@ -4,7 +4,6 @@ import Link from "next/link";
 import { startTransition, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/axios/axios";
-import type { ActiveAccess } from "../payments/types";
 
 type Chat = {
   _id: string;
@@ -18,7 +17,6 @@ export default function ChatSidebar() {
   const router = useRouter();
 
   const [chats, setChats] = useState<Chat[]>([]);
-  const [access, setAccess] = useState<ActiveAccess | null>(null);
   const [creating, setCreating] = useState(false);
   const [newChatDisabled, setNewChatDisabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,21 +43,6 @@ export default function ChatSidebar() {
     };
 
     loadChats();
-  }, []);
-
-  useEffect(() => {
-    let active = true;
-
-    api
-      .get<ActiveAccess>("/payments/access")
-      .then((response) => {
-        if (active) setAccess(response.data);
-      })
-      .catch(() => undefined);
-
-    return () => {
-      active = false;
-    };
   }, []);
 
   useEffect(() => {
@@ -184,25 +167,10 @@ export default function ChatSidebar() {
 
   return (
     <aside className="flex h-full w-full flex-col border-r border-border bg-sidebar">
-      <div className="flex h-14 items-center justify-between px-3">
+      <div className="flex h-14 items-center px-3">
         <Link href="/" className="flex items-center gap-2 px-2 text-sm font-medium">
           <span>MyChat</span>
         </Link>
-
-        <span
-          title={
-            access?.expiresAt
-              ? `Active until ${new Date(access.expiresAt).toLocaleDateString()}`
-              : "Free plan"
-          }
-          className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${
-            access && access.plan !== "free"
-              ? "border-primary/30 bg-primary/10 text-primary"
-              : "border-border text-muted-foreground"
-          }`}
-        >
-          {access?.planName || "Free"}
-        </span>
       </div>
 
       <div className="px-2">

@@ -20,23 +20,6 @@ export default function LoginForm() {
 
   const setUser = useAuthStore((state) => state.setUser);
 
-  const goAfterLogin = (role: string) => {
-    if (typeof window !== "undefined") {
-      const next = new URLSearchParams(window.location.search).get("next");
-
-      if (next && next.startsWith("/") && !next.startsWith("//")) {
-        router.push(next);
-        return;
-      }
-    }
-
-    if (role === "admin") {
-      router.push("/admin_pages/dashboard");
-    } else {
-      router.push("/chat");
-    }
-  };
-
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       setApiError("");
@@ -56,7 +39,11 @@ export default function LoginForm() {
 
         setUser(user);
 
-        goAfterLogin(user.role);
+        if (user.role === "admin") {
+          router.push("/admin_pages/dashboard");
+        } else {
+          router.push("/chat");
+        }
       } catch (error: unknown) {
         console.error("Google login error:", error);
 
@@ -107,7 +94,11 @@ export default function LoginForm() {
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
 
-      goAfterLogin(user.role);
+      if (user.role === "admin") {
+        router.push("/admin_pages/dashboard");
+      } else {
+        router.push("/chat");
+      }
       
     } catch (error: unknown) {
       console.error("Login error:", error);
