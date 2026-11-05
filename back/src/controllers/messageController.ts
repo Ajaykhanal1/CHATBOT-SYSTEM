@@ -16,6 +16,7 @@ import {
   getStudentsBySemester,
   getTotalStudentCount,
   getStudentByName,
+  getAllStudents,
   getStudentAttendance,
   getAllTeachers,
   getLatestNotices,
@@ -66,7 +67,19 @@ const getTeachersFromQuestion = async (question: string) => {
     return pattern.test(question);
   });
 
-  return matches.length ? matches : teachers;
+  return matches;
+};
+
+const getStudentFromQuestion = async (question: string) => {
+  const students = await getAllStudents();
+  const student = students
+    .filter(({ name }: any) => {
+      const escapedName = String(name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return new RegExp(`\\b${escapedName}\\b`, "i").test(question);
+    })
+    .sort((a: any, b: any) => b.name.length - a.name.length)[0];
+
+  return student ? getStudentByName(student.name) : null;
 };
 
 const getDatabaseResult = async (question: string, email: string) => {
@@ -86,9 +99,12 @@ const getDatabaseResult = async (question: string, email: string) => {
     case "gpa":
     case "courses":
     case "student":
-      return parsed.studentName
-        ? getStudentByName(parsed.studentName)
-        : getStudentData(email);
+      if (parsed.studentName) {
+        const student = await getStudentByName(parsed.studentName);
+        if (student) return student;
+      }
+
+      return (await getStudentFromQuestion(question)) ?? getStudentData(email);
 
     case "attendance":
       return getStudentAttendance(parsed.studentName || email);
@@ -101,7 +117,7 @@ const getDatabaseResult = async (question: string, email: string) => {
       return getLatestNotices();
 
     default:
-      return null;
+      return getStudentFromQuestion(question);
   }
 };
 
