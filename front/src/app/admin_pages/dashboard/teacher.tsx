@@ -45,19 +45,20 @@ export default function Teacher() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const form = e.currentTarget;
+
     setIsLoading(true);
     setMessage("");
 
     try {
-      const response = await api.post("/admin/teachers", {
-        name,
-        email,
-        faculty,
-        courses,
-      });
+      const response = await api.post(
+        "/admin/teachers",
+        new FormData(form)
+      );
 
       setMessage(response.data.message || "Teacher added successfully");
 
+      form.reset();
       setName("");
       setEmail("");
       setFaculty("");
@@ -101,6 +102,7 @@ export default function Teacher() {
 
             <Input
               id="teacher-name"
+              name="name"
               type="text"
               placeholder="Enter teacher name"
               value={name}
@@ -116,6 +118,7 @@ export default function Teacher() {
 
             <Input
               id="teacher-email"
+              name="email"
               type="email"
               placeholder="teacher@example.com"
               value={email}
@@ -130,6 +133,7 @@ export default function Teacher() {
 
             <select
               id="faculty"
+              name="faculty"
               value={faculty}
               onChange={(e) => {
                 setFaculty(e.target.value);
@@ -158,6 +162,7 @@ export default function Teacher() {
 
             <select
               id="courses"
+              name="courses"
               value={courses[0] || ""}
               onChange={(e) => {
                 setCourses(e.target.value ? [e.target.value] : []);
@@ -176,6 +181,18 @@ export default function Teacher() {
                 </option>
               ))}
             </select>
+          </Field>
+
+          {/* Teacher Picture */}
+          <Field>
+            <Label htmlFor="picture">Teacher Picture</Label>
+
+            <Input
+              id="picture"
+              name="picture"
+              type="file"
+              accept="image/*"
+            />
           </Field>
         </FieldGroup>
 

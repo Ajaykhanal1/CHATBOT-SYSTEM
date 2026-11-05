@@ -6,7 +6,20 @@ export const createTeacher = async (
   res: Response
 ) => {
   try {
-    const teacher = await Teacher.create(req.body);
+    const { name, email, courses } = req.body;
+
+    const teacher = await Teacher.create({
+      name,
+      email,
+      courses: Array.isArray(courses)
+        ? courses
+        : courses
+        ? [courses]
+        : [],
+      picture: req.file
+        ? `/uploads/${req.file.filename}`
+        : undefined,
+    });
 
     res.status(201).json({
       message: "Teacher added successfully",

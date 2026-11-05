@@ -21,6 +21,10 @@ const messageSchema = new mongoose.Schema(
       enum: ["like", "dislike", null],
       default: null,
     },
+    images: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 );

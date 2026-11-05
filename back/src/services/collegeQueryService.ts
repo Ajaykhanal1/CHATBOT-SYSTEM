@@ -105,6 +105,7 @@ export const getStudentAttendance = async (name: string) => {
       email: student.email,
       rollNumber: student.rollNumber,
       semester: student.semester,
+      picture: student.picture,
     },
     attendance,
   };
@@ -146,7 +147,9 @@ export const getCourseByName = async (
 // =========================
 
 export const getAllTeachers = async () => {
-  return await Teacher.find().lean();
+  return await Teacher.find()
+    .populate("courses")
+    .lean();
 };
 
 export const getTeacherByName = async (

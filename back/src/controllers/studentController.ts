@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 
 import Student from "../models/Student";
-import { User } from "../models/user.model";
 
 export const createStudent = async (
     req: Request,
@@ -17,34 +16,32 @@ export const createStudent = async (
             courses,
         } = req.body;
 
-        // Check required email
-        if (!email) {
+        const normalizedEmail = String(email ?? "")
+            .toLowerCase()
+            .trim();
+
+        if (!normalizedEmail) {
             return res.status(400).json({
                 message: "Student email is required",
             });
         }
 
-        // Find existing User by email
-        const user = await User.findOne({
-            email: email.toLowerCase().trim(),
-        });
-
-        if (!user) {
-            return res.status(404).json({
-                message:
-                    "No user account found with this email",
-            });
-        }
-
-        // Create Student and connect User
+        // Admin-created students are independent of any User account.
+        // A User is linked later when the student registers.
         const student = await Student.create({
-            user: user._id,
             name,
-            email: email.toLowerCase().trim(),
+            email: normalizedEmail,
             rollNumber,
             semester,
             gpa,
-            courses,
+            courses: Array.isArray(courses)
+                ? courses
+                : courses
+                ? [courses]
+                : [],
+            picture: req.file
+                ? `/uploads/${req.file.filename}`
+                : undefined,
         });
 
         return res.status(201).json({
@@ -62,7 +59,7 @@ export const createStudent = async (
         ) {
             return res.status(409).json({
                 message:
-                    "Student already exists or this User is already linked to a Student",
+                    "A student with this email or roll number already exists",
             });
         }
 

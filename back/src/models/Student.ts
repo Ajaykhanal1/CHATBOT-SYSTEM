@@ -1,13 +1,14 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IStudent extends Document {
-    user: mongoose.Types.ObjectId;
+    user?: mongoose.Types.ObjectId;
     name: string;
     email: string;
     rollNumber: string;
     semester: number;
     gpa: number;
     courses: mongoose.Types.ObjectId[];
+    picture?: string;
 }
 
 const studentSchema = new Schema<IStudent>(
@@ -15,8 +16,8 @@ const studentSchema = new Schema<IStudent>(
         user: {
             type: Schema.Types.ObjectId,
             ref: "User",
-            required: true,
             unique: true,
+            sparse: true,
         },
 
         name: {
@@ -28,6 +29,8 @@ const studentSchema = new Schema<IStudent>(
             type: String,
             required: true,
             unique: true,
+            lowercase: true,
+            trim: true,
         },
 
         rollNumber: {
@@ -52,6 +55,10 @@ const studentSchema = new Schema<IStudent>(
                 ref: "Course",
             },
         ],
+
+        picture: {
+            type: String,
+        },
     },
     {
         timestamps: true,

@@ -54,22 +54,13 @@ export default function Student() {
         const form = e.currentTarget;
         const formData = new FormData(form);
 
-        const studentData = {
-            name: formData.get("name") as string,
-            email: formData.get("email") as string,
-            rollNumber: formData.get("rollNumber") as string,
-            semester: Number(formData.get("semester")),
-            gpa: Number(formData.get("gpa")),
-            courses: [formData.get("courses") as string],
-        };
-
         try {
             setLoading(true);
             setMessage("");
 
             const { data } = await api.post(
                 "/admin/students",
-                studentData
+                formData
             );
 
             setMessage(
@@ -232,7 +223,7 @@ export default function Student() {
                     </Field>
 
                     {/* Course */}
-                    <Field className="sm:col-span-2">
+                    <Field>
                         <Label htmlFor="courses">Course</Label>
 
                         <select
@@ -259,6 +250,18 @@ export default function Student() {
                                 </option>
                             ))}
                         </select>
+                    </Field>
+
+                    {/* Student Picture */}
+                    <Field>
+                        <Label htmlFor="picture">Student Picture</Label>
+
+                        <Input
+                            id="picture"
+                            name="picture"
+                            type="file"
+                            accept="image/*"
+                        />
                     </Field>
                 </FieldGroup>
 

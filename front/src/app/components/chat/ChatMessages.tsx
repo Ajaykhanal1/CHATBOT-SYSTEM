@@ -22,6 +22,7 @@ type Message = {
   content: string;
   feedback?: "like" | "dislike" | null;
   createdAt?: string;
+  images?: string[];
 };
 
 type SocketChatPayload = {
@@ -36,6 +37,11 @@ const markdownPlugins = {
   remarkPlugins: [remarkGfm],
   rehypePlugins: [rehypeHighlight],
 };
+
+const imageUrl = (path: string) =>
+  /^https?:\/\//.test(path)
+    ? path
+    : `${process.env.NEXT_PUBLIC_API_URL}${path}`;
 
 export default function ChatMessages({ chatId }: { chatId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -384,6 +390,20 @@ export default function ChatMessages({ chatId }: { chatId: string }) {
                     <span className="text-muted-foreground">No response</span>
                   )}
                 </div>
+
+                {message.images?.length ? (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {message.images.map((path) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        key={path}
+                        src={imageUrl(path)}
+                        alt="Student or teacher"
+                        className="max-h-64 max-w-full rounded-lg border border-border object-contain"
+                      />
+                    ))}
+                  </div>
+                ) : null}
 
                 <div className="mt-1 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
                   <span className="mr-1 text-[10px] text-muted-foreground">

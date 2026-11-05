@@ -51,6 +51,24 @@ const getOwnedChat = async (chatId: string, userId: string) => {
   return Chat.findOne({ _id: chatId, userId });
 };
 
+const getTeachersFromQuestion = async (question: string) => {
+  const teachers = await getAllTeachers();
+  const matches = teachers.filter((teacher: any) => {
+    const name = String(teacher?.name ?? "").trim();
+
+    if (!name) return false;
+
+    const pattern = new RegExp(
+      `\\b${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`,
+      "i"
+    );
+
+    return pattern.test(question);
+  });
+
+  return matches.length ? matches : teachers;
+};
+
 const getDatabaseResult = async (question: string, email: string) => {
   const parsed = parseQuestion(question);
 
@@ -77,7 +95,7 @@ const getDatabaseResult = async (question: string, email: string) => {
 
     case "teacher":
     case "teacher_info":
-      return getAllTeachers();
+      return getTeachersFromQuestion(question);
 
     case "notice":
       return getLatestNotices();
@@ -85,6 +103,21 @@ const getDatabaseResult = async (question: string, email: string) => {
     default:
       return null;
   }
+};
+
+const getPictures = (result: unknown): string[] => {
+  const items = Array.isArray(result) ? result : result ? [result] : [];
+  const pictures: string[] = [];
+
+  for (const item of items) {
+    const record =
+      (item as { student?: { picture?: string } })?.student ?? item;
+    const picture = (record as { picture?: string })?.picture;
+
+    if (picture) pictures.push(picture);
+  }
+
+  return [...new Set(pictures)];
 };
 
 const buildPrompt = async (
@@ -109,10 +142,13 @@ const buildPrompt = async (
     .map((msg) => `${msg.role}: ${msg.content}`)
     .join("\n");
 
-  return `
+  const prompt = `
 You are MyChat AI, a smart, helpful, and natural conversational assistant.
 
-Answer the CURRENT USER QUESTION using the available information below.
+CURRENT USER QUESTION:
+${question}
+
+Answer the question using the available information below.
 
 SOURCE PRIORITY:
 1. DATABASE RESULT — use this first for structured college data such as:
@@ -149,11 +185,10 @@ ${context}
 CONVERSATION:
 ${conversation}
 
-CURRENT USER QUESTION:
-${question}
-
-Answer naturally:
+Use the sources above to answer the question. Answer naturally:
 `;
+
+  return { prompt, images: getPictures(databaseResult) };
 };
 
 const startTitleGeneration = (chat: any, question: string) => {
@@ -199,15 +234,17 @@ const streamReply = async (
   emitChatEvent(chatId, userId, "message:start", { chatId });
 
   let answer = "";
+  let images: string[] = [];
 
   try {
-    const prompt = await buildPrompt(
+    const promptResult = await buildPrompt(
       chatId,
       userMessage.content,
       req.user.email
     );
+    images = promptResult.images;
 
-    const stream = generateAIResponseStream(prompt, abort.signal);
+    const stream = generateAIResponseStream(promptResult.prompt, abort.signal);
 
     for await (const chunk of stream) {
       if (abort.signal.aborted) break;
@@ -230,6 +267,7 @@ const streamReply = async (
       chatId,
       role: "assistant",
       content: answer,
+      images,
     });
   }
 

@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 import { ZodError } from "zod";
 import { OAuth2Client } from "google-auth-library";
 
-import { User } from "../models/user.model";
+import { User, IUser } from "../models/user.model";
+import Student from "../models/Student";
 import {
   registerSchema,
   loginSchema,
@@ -15,6 +17,21 @@ import crypto from "crypto";
 import { sendResetEmail } from "../config/mailer";
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+class RegisterConflict extends Error {}
+
+// Standalone MongoDB (local dev) rejects transactions with code 20.
+const isTransactionUnsupported = (error: unknown): boolean =>
+  typeof error === "object" &&
+  error !== null &&
+  "code" in error &&
+  (error as { code?: unknown }).code === 20;
+
+const isDuplicateKey = (error: unknown): boolean =>
+  typeof error === "object" &&
+  error !== null &&
+  "code" in error &&
+  (error as { code?: unknown }).code === 11000;
 
 export const googleLogin = async (
   req: Request,
@@ -146,14 +163,72 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     // Hash password
     const hashedPassword = await bcrypt.hash(data.password, 12);
 
-    // Create user
-    const user = await User.create({
-      name: data.name,
-      email: data.email,
-      password: hashedPassword,
-      acceptedTerms: data.acceptedTerms,
-      role: "user",
-    });
+    // Create the User and link any admin-created Student with the same email.
+    const createAndLink = async (
+      session?: mongoose.ClientSession,
+    ): Promise<IUser> => {
+      const student = await Student.findOne({
+        email: data.email,
+      }).session(session ?? null);
+
+      // Never overwrite an existing link or admin-managed student data.
+      if (student?.user) {
+        throw new RegisterConflict(
+          "This student record is already linked to another account.",
+        );
+      }
+
+      const [created] = await User.create(
+        [
+          {
+            name: data.name,
+            email: data.email,
+            password: hashedPassword,
+            acceptedTerms: data.acceptedTerms,
+            role: "user",
+          },
+        ],
+        { session },
+      );
+
+      if (student) {
+        try {
+          student.user = created._id;
+          await student.save({ session });
+        } catch (error) {
+          // No transaction on standalone MongoDB: undo the orphaned User.
+          if (!session) {
+            await User.deleteOne({ _id: created._id });
+          }
+
+          throw error;
+        }
+      }
+
+      return created;
+    };
+
+    // Registration and linking stay atomic where the database supports it.
+    const user = await (async () => {
+      const session = await mongoose.startSession();
+
+      try {
+        let created: IUser | undefined;
+
+        await session.withTransaction(async () => {
+          created = await createAndLink(session);
+        });
+
+        return created as IUser;
+      } catch (error) {
+        // Local standalone MongoDB does not support transactions (code 20).
+        if (!isTransactionUnsupported(error)) throw error;
+
+        return await createAndLink();
+      } finally {
+        await session.endSession();
+      }
+    })();
 
     res.status(201).json({
       success: true,
@@ -167,6 +242,24 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     });
   } catch (error) {
     console.error("Register error:", error);
+
+    if (error instanceof RegisterConflict) {
+      res.status(409).json({
+        success: false,
+        message: error.message,
+      });
+
+      return;
+    }
+
+    if (isDuplicateKey(error)) {
+      res.status(409).json({
+        success: false,
+        message: "An account with this email already exists.",
+      });
+
+      return;
+    }
 
     if (error instanceof Error && error.name === "ZodError") {
       res.status(400).json({
