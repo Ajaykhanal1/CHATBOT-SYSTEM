@@ -13,6 +13,21 @@ const chatSchema = new mongoose.Schema(
       default: "New Chat",
     },
 
+    pinned: {
+      type: Boolean,
+      default: false,
+    },
+
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
+
+    archived: {
+      type: Boolean,
+      default: false,
+    },
+
     expiresAt: {
       type: Date,
       default: () => new Date(Date.now() + 60 * 1000),

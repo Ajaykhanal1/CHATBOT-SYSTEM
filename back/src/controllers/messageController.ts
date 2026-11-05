@@ -2,7 +2,10 @@ import { Request, Response } from "express";
 import Message from "../models/Message";
 import Chat from "../models/Chat";
 import mongoose from "mongoose";
-import { generateAIResponse } from "../services/geminiService";
+import {
+  generateAIResponseStream,
+  generateChatTitle,
+} from "../services/geminiService";
 import searchQdrant from "../services/searchQdrant";
 import { getStudentData } from "../services/structuredDataService";
 import { parseQuestion } from "../services/questionParser";
@@ -18,184 +21,95 @@ import {
   getLatestNotices,
 } from "../services/collegeQueryService";
 
-export const sendMessage = async (req: Request, res: Response) => {
+const emitToUser = (userId: string, event: string, payload: unknown) => {
   try {
-    const { content } = req.body;
-    const studentData = await getStudentData(req.user.email);
-    if (!content?.trim()) {
-      return res.status(400).json({
-        message: "Message content is required",
-      });
-    }
-// Parse question
-const parsedQuestion = parseQuestion(content.trim());
+    getIO().to(`user:${userId}`).emit(event, payload);
+  } catch (error) {
+    console.error("SOCKET EMIT ERROR:", error);
+  }
+};
 
-console.log("PARSED QUESTION:", parsedQuestion);
+// Emit to the chat room and the user room so a freshly opened tab never misses
+// the first stream events before it joins the chat room.
+const emitChatEvent = (
+  chatId: string,
+  userId: string,
+  event: string,
+  payload: unknown
+) => {
+  try {
+    // Chained rooms dedupe sockets that are in both rooms.
+    getIO().to(`chat:${chatId}`).to(`user:${userId}`).emit(event, payload);
+  } catch (error) {
+    console.error("SOCKET EMIT ERROR:", error);
+  }
+};
 
-// Query MongoDB based on question type
-let databaseResult: unknown = null;
+const getOwnedChat = async (chatId: string, userId: string) => {
+  if (!mongoose.isValidObjectId(chatId)) return null;
 
-switch (parsedQuestion.type) {
-  // ─────────────────────────────────────────────
-  // Student Count
-  // Example: How many students are in semester 2?
-  // ─────────────────────────────────────────────
-  case "student_count":
-    if (parsedQuestion.semester !== undefined) {
-      databaseResult = await getStudentCountBySemester(
-        parsedQuestion.semester
-      );
-    } else {
-      databaseResult = await getTotalStudentCount();
-    }
-    break;
+  return Chat.findOne({ _id: chatId, userId });
+};
 
-  // ─────────────────────────────────────────────
-  // Students By Semester
-  // Example: Show students in semester 2
-  // ─────────────────────────────────────────────
-  case "students_by_semester":
-    if (parsedQuestion.semester !== undefined) {
-      databaseResult = await getStudentsBySemester(
-        parsedQuestion.semester
-      );
-    }
-    break;
+const getDatabaseResult = async (question: string, email: string) => {
+  const parsed = parseQuestion(question);
 
-  // ─────────────────────────────────────────────
-  // GPA
-  // Example: What is Ajay's GPA?
-  // ─────────────────────────────────────────────
-  case "gpa":
-    if (parsedQuestion.studentName) {
-      databaseResult = await getStudentByName(
-        parsedQuestion.studentName
-      );
-    } else {
-      databaseResult = await getStudentData(req.user.email);
-    }
-    break;
+  switch (parsed.type) {
+    case "student_count":
+      return parsed.semester !== undefined
+        ? getStudentCountBySemester(parsed.semester)
+        : getTotalStudentCount();
 
-  // ─────────────────────────────────────────────
-  // Attendance
-  // Example: What is Ajay's attendance?
-  // ─────────────────────────────────────────────
-  case "attendance":
-    if (parsedQuestion.studentName) {
-      databaseResult = await getStudentAttendance(
-        parsedQuestion.studentName
-      );
-    } else {
-      databaseResult = await getStudentAttendance(
-        req.user.email
-      );
-    }
-    break;
+    case "students_by_semester":
+      return parsed.semester !== undefined
+        ? getStudentsBySemester(parsed.semester)
+        : null;
 
-  // ─────────────────────────────────────────────
-  // Courses
-  // Example: What courses does Ajay take?
-  // ─────────────────────────────────────────────
-  case "courses":
-    if (parsedQuestion.studentName) {
-      databaseResult = await getStudentByName(
-        parsedQuestion.studentName
-      );
-    } else {
-      databaseResult = await getStudentData(req.user.email);
-    }
-    break;
+    case "gpa":
+    case "courses":
+    case "student":
+      return parsed.studentName
+        ? getStudentByName(parsed.studentName)
+        : getStudentData(email);
 
-  // ─────────────────────────────────────────────
-  // Teacher
-  // Example: Who teaches Web Technology?
-  // ─────────────────────────────────────────────
-  case "teacher":
-  case "teacher_info":
-    if (parsedQuestion.studentName) {
-      databaseResult = await getStudentByName(
-        parsedQuestion.studentName
-      );
-    } else {
-      databaseResult = await getAllTeachers();
-    }
-    break;
+    case "attendance":
+      return getStudentAttendance(parsed.studentName || email);
 
-  // ─────────────────────────────────────────────
-  // Notice
-  // Example: Show latest notices
-  // ─────────────────────────────────────────────
-  case "notice":
-    databaseResult = await getLatestNotices();
-    break;
+    case "teacher":
+    case "teacher_info":
+      return getAllTeachers();
 
-  // ─────────────────────────────────────────────
-  // Student Information
-  // Example: Tell me about Ajay
-  // ─────────────────────────────────────────────
-  case "student":
-    if (parsedQuestion.studentName) {
-      databaseResult = await getStudentByName(
-        parsedQuestion.studentName
-      );
-    } else {
-      databaseResult = await getStudentData(req.user.email);
-    }
-    break;
+    case "notice":
+      return getLatestNotices();
 
-  // ─────────────────────────────────────────────
-  // Unknown
-  // ─────────────────────────────────────────────
-  case "unknown":
-  default:
-    databaseResult = null;
-    break;
-}
+    default:
+      return null;
+  }
+};
 
-console.log("DATABASE RESULT:", databaseResult);
+const buildPrompt = async (
+  chatId: string,
+  question: string,
+  email: string
+) => {
+  const [previousMessages, results, databaseResult, studentData] =
+    await Promise.all([
+      Message.find({ chatId }).sort({ createdAt: 1 }),
+      searchQdrant(question),
+      getDatabaseResult(question, email),
+      getStudentData(email),
+    ]);
 
-    const chatId = new mongoose.Types.ObjectId(req.params.chatId as string);
+  const context = results.points
+    .map((point: any) => point.payload?.text)
+    .filter(Boolean)
+    .join("\n\n");
 
-    // Check that chat belongs to logged-in user
-    const chat = await Chat.findOne({
-      _id: chatId,
-      userId: req.user.id,
-    });
+  const conversation = previousMessages
+    .map((msg) => `${msg.role}: ${msg.content}`)
+    .join("\n");
 
-    if (!chat) {
-      return res.status(404).json({
-        message: "Chat not found",
-      });
-    }
-
-    // Save user message
-    const message = await Message.create({
-      chatId,
-      role: "user",
-      content: content.trim(),
-    });
-
-    // Generate AI response
-
-    // Get Previous messages for Prompt
-    const previousMessages = await Message.find({
-      chatId,
-    }).sort({
-      createdAt: 1,
-    });
-
-    const results = await searchQdrant(content.trim());
-    const chunks = results.points
-      .map((point) => point.payload?.text)
-      .filter(Boolean);
-    const context = chunks.join("\n\n");
-
-    // Build Prompt with previous messages
-    const conversation = previousMessages
-      .map((msg) => `${msg.role}: ${msg.content}`)
-      .join("\n");
-
-    const prompt = `
+  return `
 You are MyChat AI, a smart, helpful, and natural conversational assistant.
 
 Answer the CURRENT USER QUESTION using the available information below.
@@ -236,69 +150,331 @@ CONVERSATION:
 ${conversation}
 
 CURRENT USER QUESTION:
-${content.trim()}
+${question}
 
 Answer naturally:
 `;
+};
 
-    // Generate AI response using Gemini API
-    const aiResponse = await generateAIResponse(prompt);
+const startTitleGeneration = (chat: any, question: string) => {
+  if (chat.title !== "New Chat") return;
 
-    // Save AI response
-    const aiMessage = await Message.create({
+  const chatId = chat._id.toString();
+  const userId = chat.userId.toString();
+
+  // Runs in the background so the answer is not delayed by title generation.
+  generateChatTitle(question).then(async (title) => {
+    if (!title) return;
+
+    const updatedChat = await Chat.findOneAndUpdate(
+      { _id: chatId, title: "New Chat" },
+      { $set: { title } },
+      { new: true }
+    );
+
+    if (updatedChat) {
+      emitChatEvent(chatId, userId, "chat:updated", updatedChat);
+    }
+  }).catch((error) => {
+    console.error("TITLE UPDATE ERROR:", error);
+  });
+};
+
+const streamReply = async (
+  req: Request,
+  res: Response,
+  chat: any,
+  userMessage: any
+) => {
+  const chatId = chat._id.toString();
+  const userId = chat.userId.toString();
+  const abort = new AbortController();
+
+  const handleClose = () => {
+    if (!res.writableEnded) abort.abort();
+  };
+
+  res.on("close", handleClose);
+
+  emitChatEvent(chatId, userId, "message:start", { chatId });
+
+  let answer = "";
+
+  try {
+    const prompt = await buildPrompt(
+      chatId,
+      userMessage.content,
+      req.user.email
+    );
+
+    const stream = generateAIResponseStream(prompt, abort.signal);
+
+    for await (const chunk of stream) {
+      if (abort.signal.aborted) break;
+      answer += chunk;
+      emitChatEvent(chatId, userId, "message:chunk", { chatId, content: chunk });
+    }
+  } catch (error) {
+    if (!abort.signal.aborted) {
+      res.off("close", handleClose);
+      throw error;
+    }
+  } finally {
+    res.off("close", handleClose);
+  }
+
+  let aiMessage = null;
+
+  if (answer.trim()) {
+    aiMessage = await Message.create({
       chatId,
       role: "assistant",
-      content: aiResponse,
+      content: answer,
     });
+  }
 
-    // Use first message as chat title
-    // First message → make chat permanent
-    const update: any = {
-      $unset: {
-        expiresAt: 1,
-      },
-    };
+  const updatedChat = await Chat.findByIdAndUpdate(
+    chatId,
+    { $unset: { expiresAt: 1 } },
+    { new: true }
+  );
 
-    if (chat.title === "New Chat") {
-      update.$set = { title: content.trim().slice(0, 50) };
-    }
+  emitChatEvent(chatId, userId, "message:done", {
+    chatId,
+    aiMessage,
+    chat: updatedChat,
+  });
 
-    const updatedChat = await Chat.findOneAndUpdate({ _id: chat._id }, update, {
-      new: true,
-    });
+  return { aiMessage, chat: updatedChat };
+};
 
-    try {
-      const io = getIO();
-      io.to(`chat:${chatId.toString()}`).emit("message:new", {
-        chatId: chatId.toString(),
-        userMessage: message,
-        aiMessage,
-        chat: updatedChat,
+export const sendMessage = async (req: Request, res: Response) => {
+  try {
+    const content = String(req.body?.content ?? "").trim();
+
+    if (!content) {
+      return res.status(400).json({
+        message: "Message content is required",
       });
-    } catch (e) {
-      console.error("SOCKET EMIT ERROR:", e);
     }
 
-    res.status(201).json({
-      message,
-      aiResponse,
-      chat: updatedChat,
+    const chat = await getOwnedChat(req.params.chatId as string, req.user.id);
+
+    if (!chat) {
+      return res.status(404).json({
+        message: "Chat not found",
+      });
+    }
+
+    const userMessage = await Message.create({
+      chatId: chat._id,
+      role: "user",
+      content,
     });
+
+    // Keep the conversation as soon as it has a message, even if generation fails.
+    await Chat.updateOne({ _id: chat._id }, { $unset: { expiresAt: 1 } });
+
+    emitChatEvent(chat._id.toString(), req.user.id, "message:user", {
+      chatId: chat._id.toString(),
+      userMessage,
+    });
+    emitToUser(req.user.id, "chat:updated", {
+      ...chat.toObject(),
+      updatedAt: new Date(),
+    });
+
+    startTitleGeneration(chat, content);
+
+    const result = await streamReply(req, res, chat, userMessage);
+
+    if (!res.destroyed) {
+      res.status(201).json({
+        message: userMessage,
+        aiResponse: result.aiMessage?.content ?? "",
+        chat: result.chat,
+      });
+    }
   } catch (error) {
     console.error("SEND MESSAGE ERROR:", error);
 
-    res.status(500).json({
-      message: "Failed to send message",
-      error: error instanceof Error ? error.message : String(error),
+    emitChatEvent(
+      String(req.params.chatId),
+      req.user.id,
+      "message:error",
+      {
+        chatId: String(req.params.chatId),
+        message: "Failed to send message",
+      }
+    );
+
+    if (!res.destroyed) {
+      res.status(500).json({
+        message: "Failed to send message",
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+};
+
+export const regenerateResponse = async (req: Request, res: Response) => {
+  try {
+    const chat = await getOwnedChat(req.params.chatId as string, req.user.id);
+
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+
+    const lastUserMessage = await Message.findOne({
+      chatId: chat._id,
+      role: "user",
+    }).sort({ createdAt: -1 });
+
+    if (!lastUserMessage) {
+      return res.status(400).json({ message: "No user message to regenerate" });
+    }
+
+    await Message.deleteMany({
+      chatId: chat._id,
+      _id: { $gt: lastUserMessage._id },
     });
+
+    const result = await streamReply(req, res, chat, lastUserMessage);
+
+    if (!res.destroyed) {
+      res.status(201).json({
+        aiResponse: result.aiMessage?.content ?? "",
+        chat: result.chat,
+      });
+    }
+  } catch (error) {
+    console.error("REGENERATE ERROR:", error);
+
+    emitChatEvent(
+      String(req.params.chatId),
+      req.user.id,
+      "message:error",
+      {
+        chatId: String(req.params.chatId),
+        message: "Failed to regenerate response",
+      }
+    );
+
+    if (!res.destroyed) {
+      res.status(500).json({ message: "Failed to regenerate response" });
+    }
+  }
+};
+
+export const editMessage = async (req: Request, res: Response) => {
+  try {
+    const content = String(req.body?.content ?? "").trim();
+
+    if (!content) {
+      return res.status(400).json({ message: "Message content is required" });
+    }
+
+    const chat = await getOwnedChat(req.params.chatId as string, req.user.id);
+
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+
+    const message = await Message.findOne({
+      _id: req.params.messageId,
+      chatId: chat._id,
+      role: "user",
+    });
+
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    message.content = content;
+    await message.save();
+
+    await Message.deleteMany({
+      chatId: chat._id,
+      _id: { $gt: message._id },
+    });
+
+    emitChatEvent(chat._id.toString(), req.user.id, "message:updated", {
+      chatId: chat._id.toString(),
+      message,
+    });
+
+    const result = await streamReply(req, res, chat, message);
+
+    if (!res.destroyed) {
+      res.json({
+        message,
+        aiResponse: result.aiMessage?.content ?? "",
+        chat: result.chat,
+      });
+    }
+  } catch (error) {
+    console.error("EDIT MESSAGE ERROR:", error);
+
+    emitChatEvent(
+      String(req.params.chatId),
+      req.user.id,
+      "message:error",
+      {
+        chatId: String(req.params.chatId),
+        message: "Failed to edit message",
+      }
+    );
+
+    if (!res.destroyed) {
+      res.status(500).json({ message: "Failed to edit message" });
+    }
+  }
+};
+
+export const setMessageFeedback = async (req: Request, res: Response) => {
+  try {
+    const feedback = req.body?.feedback;
+
+    if (feedback !== "like" && feedback !== "dislike" && feedback !== null) {
+      return res.status(400).json({ message: "Invalid feedback" });
+    }
+
+    const chat = await getOwnedChat(req.params.chatId as string, req.user.id);
+
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+
+    const message = await Message.findOneAndUpdate(
+      {
+        _id: req.params.messageId,
+        chatId: chat._id,
+        role: "assistant",
+      },
+      { $set: { feedback } },
+      { new: true }
+    );
+
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    res.json(message);
+  } catch (error) {
+    console.error("MESSAGE FEEDBACK ERROR:", error);
+    res.status(500).json({ message: "Failed to save feedback" });
   }
 };
 
 export const getMessages = async (req: Request, res: Response) => {
   try {
-    const chatId = new mongoose.Types.ObjectId(req.params.chatId as string);
+    const chat = await getOwnedChat(req.params.chatId as string, req.user.id);
 
-    const messages = await Message.find({ chatId }).sort({
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+
+    const messages = await Message.find({ chatId: chat._id }).sort({
       createdAt: 1,
     });
 

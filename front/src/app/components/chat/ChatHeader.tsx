@@ -1,11 +1,34 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { useState } from "react";
+import { Eraser, Menu } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { api } from "@/lib/axios/axios";
 import ModelSelector from "./ModelSelector";
 import ChatSidebar from "./ChatSidebar";
 
-export default function ChatHeader() {
+export default function ChatHeader({ chatId }: { chatId?: string }) {
+  const [clearing, setClearing] = useState(false);
+
+  const handleClear = async () => {
+    if (!chatId || clearing) return;
+
+    const confirmed = window.confirm(
+      "Clear all messages in this conversation?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setClearing(true);
+      await api.delete(`/chats/${chatId}/messages`);
+    } catch (error) {
+      console.error("Failed to clear chat:", error);
+    } finally {
+      setClearing(false);
+    }
+  };
+
   return (
     <header className="flex h-14 items-center justify-between border-b border-border px-4">
       <div className="flex items-center gap-2">
@@ -20,6 +43,21 @@ export default function ChatHeader() {
 
         <ModelSelector />
       </div>
+
+      {chatId ? (
+        <button
+          type="button"
+          onClick={handleClear}
+          disabled={clearing}
+          className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:opacity-50"
+          title="Clear conversation"
+        >
+          <Eraser className="h-4 w-4" />
+          <span className="hidden sm:inline">
+            {clearing ? "Clearing..." : "Clear"}
+          </span>
+        </button>
+      ) : null}
     </header>
   );
 }

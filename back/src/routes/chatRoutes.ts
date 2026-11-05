@@ -4,6 +4,7 @@ import {
   getChats,
   deleteChat,
   renameChat,
+  clearChat,
 } from "../controllers/chatController";
 import { authMiddleware } from "../middleware/authMiddleware";
 
@@ -14,7 +15,7 @@ router.use(authMiddleware);
 router.post("/", createChat);
 router.get("/", getChats);
 router.put("/:chatId", renameChat);
-
+router.delete("/:chatId/messages", clearChat);
 router.delete("/:chatId", deleteChat);
 
 export default router;

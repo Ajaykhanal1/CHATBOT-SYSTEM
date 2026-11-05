@@ -12,9 +12,6 @@ import { SendHorizontal } from "lucide-react";
 
 import { SpinnerCustom } from "../../components/ui/spinner";
 
-const COOLDOWN = 60 * 1000;
-const COOLDOWN_KEY = "newChatCooldown";
-
 export default function ChatPage({
   chatId,
 }: {
@@ -25,7 +22,6 @@ export default function ChatPage({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [message, setMessage] = useState("");
   const [creating, setCreating] = useState(false);
-  const [newChatDisabled, setNewChatDisabled] = useState(false);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -43,56 +39,23 @@ export default function ChatPage({
     checkAuth();
   }, [router]);
 
-  useEffect(() => {
-    const checkCooldown = () => {
-      const cooldownUntil = localStorage.getItem(COOLDOWN_KEY);
-
-      if (!cooldownUntil) {
-        setNewChatDisabled(false);
-        return;
-      }
-
-      const remaining = Number(cooldownUntil) - Date.now();
-
-      if (remaining > 0) {
-        setNewChatDisabled(true);
-      } else {
-        localStorage.removeItem(COOLDOWN_KEY);
-        setNewChatDisabled(false);
-      }
-    };
-
-    checkCooldown();
-
-    const interval = setInterval(checkCooldown, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const handleStart = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!message.trim() || creating || newChatDisabled) return;
+    if (!message.trim() || creating) return;
 
     try {
       setCreating(true);
 
-      const cooldownUntil = Date.now() + COOLDOWN;
-      localStorage.setItem(COOLDOWN_KEY, cooldownUntil.toString());
-      setNewChatDisabled(true);
-
       const res = await api.post("/chats");
       const newChat = res.data;
 
-      await api.post(`/messages/${newChat._id}`, {
-        content: message.trim(),
-      });
+      sessionStorage.setItem(`pendingPrompt:${newChat._id}`, message.trim());
+      window.dispatchEvent(new Event("chats:changed"));
 
       setMessage("");
       router.push(`/chat/${newChat._id}`);
     } catch (error) {
       console.error("Failed to start chat:", error);
-      localStorage.removeItem(COOLDOWN_KEY);
-      setNewChatDisabled(false);
     } finally {
       setCreating(false);
     }
@@ -127,7 +90,7 @@ export default function ChatPage({
       </aside>
 
       <section className="flex min-w-0 flex-1 flex-col">
-        <ChatHeader />
+        <ChatHeader chatId={chatId} />
 
         {chatId ? (
           <>
@@ -150,18 +113,18 @@ export default function ChatPage({
                     placeholder="Message..."
                     rows={1}
                     className="max-h-40 min-h-11 flex-1 resize-none bg-transparent px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground"
-                    disabled={creating || newChatDisabled}
+                    disabled={creating}
                   />
                   <button
                     type="submit"
-                    disabled={!message.trim() || creating || newChatDisabled}
+                    disabled={!message.trim() || creating}
                     className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <SendHorizontal className="h-4 w-4" />
                   </button>
                 </div>
                 <p className="mt-2 text-center text-xs text-muted-foreground">
-                  {newChatDisabled ? "New chat on cooldown (1 min)" : ""}
+                  {creating ? "Starting chat..." : ""}
                 </p>
               </form>
             </div>

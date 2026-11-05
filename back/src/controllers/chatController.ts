@@ -2,6 +2,15 @@ import { Request, Response } from "express";
 import Chat from "../models/Chat";
 import Message from "../models/Message";
 import mongoose from "mongoose";
+import { getIO } from "../socket";
+
+const emitToUser = (userId: string, event: string, payload: unknown) => {
+  try {
+    getIO().to(`user:${userId}`).emit(event, payload);
+  } catch (error) {
+    console.error("SOCKET EMIT ERROR:", error);
+  }
+};
 
 export const createChat = async (req: Request, res: Response) => {
   try {
@@ -24,20 +33,42 @@ export const createChat = async (req: Request, res: Response) => {
 export const getChats = async (req: Request, res: Response) => {
   const chats = await Chat.find({
     userId: req.user.id,
-  }).sort({ updatedAt: -1 });
+  }).sort({ pinned: -1, updatedAt: -1 });
 
   res.json(chats);
 };
 
-// Rename Chat
+// Rename chat / pin / favorite / archive
 export const renameChat = async (req: Request, res: Response) => {
   try {
     const chatId = new mongoose.Types.ObjectId(req.params.chatId as string);
-    const { title } = req.body;
+    const { title, pinned, favorite, archived } = req.body;
 
-    if (!title?.trim()) {
+    const updates: Record<string, unknown> = {};
+
+    if (title !== undefined) {
+      if (!String(title).trim()) {
+        return res.status(400).json({
+          message: "Chat title is required",
+        });
+      }
+
+      updates.title = String(title).trim().slice(0, 50);
+    }
+
+    for (const [key, value] of Object.entries({
+      pinned,
+      favorite,
+      archived,
+    })) {
+      if (typeof value === "boolean") {
+        updates[key] = value;
+      }
+    }
+
+    if (!Object.keys(updates).length) {
       return res.status(400).json({
-        message: "Chat title is required",
+        message: "Nothing to update",
       });
     }
 
@@ -47,9 +78,7 @@ export const renameChat = async (req: Request, res: Response) => {
         userId: req.user.id,
       },
       {
-        $set: {
-          title: title.trim().slice(0, 50),
-        },
+        $set: updates,
       },
       {
         new: true,
@@ -62,12 +91,54 @@ export const renameChat = async (req: Request, res: Response) => {
       });
     }
 
+    emitToUser(req.user.id, "chat:updated", chat);
+
     res.json(chat);
   } catch (error) {
     console.error("RENAME CHAT ERROR:", error);
 
     res.status(500).json({
       message: "Failed to rename chat",
+    });
+  }
+};
+
+// Clear all messages in a chat
+export const clearChat = async (req: Request, res: Response) => {
+  try {
+    const chatId = new mongoose.Types.ObjectId(req.params.chatId as string);
+
+    const chat = await Chat.findOneAndUpdate(
+      { _id: chatId, userId: req.user.id },
+      { $set: { title: "New Chat" } },
+      { new: true }
+    );
+
+    if (!chat) {
+      return res.status(404).json({
+        message: "Chat not found",
+      });
+    }
+
+    await Message.deleteMany({ chatId });
+
+    try {
+      getIO().to(`chat:${chatId.toString()}`).emit("chat:cleared", {
+        chatId: chatId.toString(),
+      });
+    } catch (error) {
+      console.error("SOCKET EMIT ERROR:", error);
+    }
+
+    emitToUser(req.user.id, "chat:cleared", { chatId: chatId.toString() });
+    emitToUser(req.user.id, "chat:updated", chat);
+
+    res.json(chat);
+  } catch (error) {
+    console.error("CLEAR CHAT ERROR:", error);
+
+    res.status(500).json({
+      message: "Failed to clear chat",
     });
   }
 };
@@ -92,6 +163,8 @@ export const deleteChat = async (req: Request, res: Response) => {
     await Message.deleteMany({
       chatId,
     });
+
+    emitToUser(req.user.id, "chat:deleted", { chatId: chatId.toString() });
 
     res.json({
       message: "Chat deleted successfully",
