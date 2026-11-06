@@ -74,10 +74,12 @@ export default function Navbar() {
             </>
           )}
           <Link
-            href="/chat"
+            href={user?.role === "admin" ? "/admin_pages/dashboard" : "/chat"}
             className="group relative inline-flex items-center gap-1 overflow-hidden rounded-full bg-gradient-to-r from-primary to-accent px-3 py-1.5 text-xs font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:shadow-primary/40 lg:gap-2 lg:px-5 lg:py-2.5 lg:text-sm"
           >
-            <span className="relative z-10">{user ? "Go to Chat" : "Try Now"}</span>
+            <span className="relative z-10">
+              {user ? (user.role === "admin" ? "Admin Dashboard" : "Go to Chat") : "Try Now"}
+            </span>
             <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-transform duration-700 group-hover:translate-x-full" />
           </Link>
         </div>
