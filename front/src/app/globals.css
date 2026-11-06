@@ -264,4 +264,12 @@
   .admin-form :is(input, select) {
     height: calc(var(--spacing) * 10);
   }
+  /* Native dropdown lists ignore the transparent select background and fall back to white */
+  .admin-form select {
+    background-color: var(--background);
+  }
+  .admin-form select option {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
 }
