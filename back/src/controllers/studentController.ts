@@ -1,43 +1,39 @@
 import { Request, Response } from "express";
 
 import Student from "../models/Student";
+import {
+    createStudentSchema,
+    zodMessage,
+} from "../validators/admin.validator";
 
 export const createStudent = async (
     req: Request,
     res: Response
 ) => {
     try {
-        const {
-            name,
-            email,
-            rollNumber,
-            semester,
-            gpa,
-            courses,
-        } = req.body;
+        const result = createStudentSchema.safeParse(req.body);
 
-        const normalizedEmail = String(email ?? "")
-            .toLowerCase()
-            .trim();
-
-        if (!normalizedEmail) {
+        if (!result.success) {
             return res.status(400).json({
-                message: "Student email is required",
+                message: zodMessage(result.error),
             });
         }
+
+        const { name, email, rollNumber, semester, gpa, courses } =
+            result.data;
 
         // Admin-created students are independent of any User account.
         // A User is linked later when the student registers.
         const student = await Student.create({
             name,
-            email: normalizedEmail,
+            email,
             rollNumber,
             semester,
             gpa,
-            courses: Array.isArray(courses)
-                ? courses
-                : courses
-                ? [courses]
+            courses: courses
+                ? Array.isArray(courses)
+                    ? courses
+                    : [courses]
                 : [],
             picture: req.file
                 ? `/uploads/${req.file.filename}`

@@ -1,12 +1,24 @@
 import { Request, Response } from "express";
 import Course from "../models/Course";
+import {
+    createCourseSchema,
+    zodMessage,
+} from "../validators/admin.validator";
 
 export const createCourse = async (
     req: Request,
     res: Response
 ) => {
     try {
-        const course = await Course.create(req.body);
+        const result = createCourseSchema.safeParse(req.body);
+
+        if (!result.success) {
+            return res.status(400).json({
+                message: zodMessage(result.error),
+            });
+        }
+
+        const course = await Course.create(result.data);
 
         return res.status(201).json({
             message: "Course added successfully",

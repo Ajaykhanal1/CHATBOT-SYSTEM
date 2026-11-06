@@ -4,13 +4,19 @@ import { useState } from "react";
 import axios from "axios";
 
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup } from "@/components/ui/field";
+import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/lib/axios/axios";
+import {
+  noticeSchema,
+  toFieldErrors,
+  type FieldErrors,
+} from "@/lib/validations/admin";
 
 export default function Notice() {
   const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState<FieldErrors>({});
   const [loading, setLoading] = useState(false);
 
   const addNotice = async (
@@ -21,14 +27,24 @@ export default function Notice() {
     const form = e.currentTarget;
     const formData = new FormData(form);
 
+    const result = noticeSchema.safeParse({
+      title: String(formData.get("title") ?? ""),
+      content: String(formData.get("content") ?? ""),
+    });
+
+    if (!result.success) {
+      setErrors(toFieldErrors(result.error));
+      setMessage("Please fix the highlighted fields.");
+      return;
+    }
+
+    setErrors({});
+
     try {
       setLoading(true);
       setMessage("");
 
-      const { data } = await api.post("/admin/notices", {
-        title: formData.get("title") as string,
-        content: formData.get("content") as string,
-      });
+      const { data } = await api.post("/admin/notices", result.data);
 
       setMessage(data.message || "Notice created successfully");
 
@@ -59,7 +75,11 @@ export default function Notice() {
         </p>
       </div>
 
-      <form onSubmit={addNotice} className="flex flex-1 flex-col">
+      <form
+        onSubmit={addNotice}
+        className="flex flex-1 flex-col"
+        noValidate
+      >
         <FieldGroup className="admin-form grid gap-4">
           {/* Title */}
           <Field>
@@ -72,7 +92,10 @@ export default function Notice() {
               placeholder="Enter notice title"
               minLength={2}
               required
+              aria-invalid={!!errors.title}
             />
+
+            <FieldError>{errors.title}</FieldError>
           </Field>
 
           {/* Content */}
@@ -85,8 +108,11 @@ export default function Notice() {
               placeholder="Write the notice content"
               rows={5}
               required
-              className="w-full max-h-[200px] rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+              aria-invalid={!!errors.content}
+              className="w-full max-h-[200px] rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:bg-input/30"
             />
+
+            <FieldError>{errors.content}</FieldError>
           </Field>
         </FieldGroup>
 

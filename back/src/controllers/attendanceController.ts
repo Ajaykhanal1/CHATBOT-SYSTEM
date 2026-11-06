@@ -1,18 +1,24 @@
 import { Request, Response } from "express";
 import Attendance from "../models/Attendance";
+import {
+  createAttendanceSchema,
+  zodMessage,
+} from "../validators/admin.validator";
 
 export const createAttendance = async (
   req: Request,
   res: Response
 ) => {
   try {
-    const { student, attendance_percentage, semester } = req.body;
+    const result = createAttendanceSchema.safeParse(req.body);
 
-    const attendance = await Attendance.create({
-      student,
-      attendance_percentage,
-      semester,
-    });
+    if (!result.success) {
+      return res.status(400).json({
+        message: zodMessage(result.error),
+      });
+    }
+
+    const attendance = await Attendance.create(result.data);
 
     res.status(201).json({
       message: "Attendance added successfully",

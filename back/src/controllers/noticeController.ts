@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
 import Notice from "../models/Notice";
+import {
+  createNoticeSchema,
+  zodMessage,
+} from "../validators/admin.validator";
 
 // Create Notice
 export const createNotice = async (
@@ -7,7 +11,15 @@ export const createNotice = async (
   res: Response
 ) => {
   try {
-    const { title, content, publishedAt } = req.body;
+    const result = createNoticeSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        message: zodMessage(result.error),
+      });
+    }
+
+    const { title, content, publishedAt } = result.data;
 
     const notice = await Notice.create({
       title,

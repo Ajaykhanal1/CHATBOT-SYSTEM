@@ -4,10 +4,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup } from "@/components/ui/field";
+import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/lib/axios/axios";
+import {
+  teacherSchema,
+  toFieldErrors,
+  type FieldErrors,
+} from "@/lib/validations/admin";
 
 interface Course {
   _id: string;
@@ -24,6 +29,7 @@ export default function Teacher() {
   const [courseList, setCourseList] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState<FieldErrors>({});
 
   useEffect(() => {
     const getCourses = async () => {
@@ -46,15 +52,25 @@ export default function Teacher() {
     e.preventDefault();
 
     const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const result = teacherSchema.safeParse(
+      Object.fromEntries(formData)
+    );
+
+    if (!result.success) {
+      setErrors(toFieldErrors(result.error));
+      setMessage("Please fix the highlighted fields.");
+      return;
+    }
+
+    setErrors({});
 
     setIsLoading(true);
     setMessage("");
 
     try {
-      const response = await api.post(
-        "/admin/teachers",
-        new FormData(form)
-      );
+      const response = await api.post("/admin/teachers", formData);
 
       setMessage(response.data.message || "Teacher added successfully");
 
@@ -94,7 +110,11 @@ export default function Teacher() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-1 flex-col"
+        noValidate
+      >
         <FieldGroup className="admin-form grid gap-4 sm:grid-cols-2">
           {/* Name */}
           <Field>
@@ -109,7 +129,10 @@ export default function Teacher() {
               onChange={(e) => setName(e.target.value)}
               minLength={2}
               required
+              aria-invalid={!!errors.name}
             />
+
+            <FieldError>{errors.name}</FieldError>
           </Field>
 
           {/* Email */}
@@ -124,7 +147,10 @@ export default function Teacher() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              aria-invalid={!!errors.email}
             />
+
+            <FieldError>{errors.email}</FieldError>
           </Field>
 
           {/* Faculty */}
@@ -141,6 +167,7 @@ export default function Teacher() {
               }}
               required
               className={selectClass}
+              aria-invalid={!!errors.faculty}
             >
               <option value="">Select Faculty</option>
 
@@ -154,6 +181,8 @@ export default function Teacher() {
 
               <option value="BBM">BBM</option>
             </select>
+
+            <FieldError>{errors.faculty}</FieldError>
           </Field>
 
           {/* Course */}
@@ -170,6 +199,7 @@ export default function Teacher() {
               disabled={!faculty}
               required
               className={selectClass}
+              aria-invalid={!!errors.courses}
             >
               <option value="">
                 {faculty ? "Select Course" : "Select Faculty First"}
@@ -181,6 +211,8 @@ export default function Teacher() {
                 </option>
               ))}
             </select>
+
+            <FieldError>{errors.courses}</FieldError>
           </Field>
 
           {/* Teacher Picture */}

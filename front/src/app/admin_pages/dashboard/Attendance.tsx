@@ -4,10 +4,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup } from "@/components/ui/field";
+import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/lib/axios/axios";
+import {
+  attendanceSchema,
+  toFieldErrors,
+  type FieldErrors,
+} from "@/lib/validations/admin";
 
 interface Student {
   _id: string;
@@ -26,6 +31,7 @@ export default function Attendance() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState<FieldErrors>({});
 
   // Get students
   useEffect(() => {
@@ -70,15 +76,28 @@ export default function Attendance() {
   ) => {
     e.preventDefault();
 
+    const result = attendanceSchema.safeParse({
+      student,
+      semester,
+      attendance_percentage: percentage,
+    });
+
+    if (!result.success) {
+      setErrors(toFieldErrors(result.error));
+      setMessage("Please fix the highlighted fields.");
+      return;
+    }
+
+    setErrors({});
+
     setIsLoading(true);
     setMessage("");
 
     try {
-      const response = await api.post("/admin/attendance", {
-        student,
-        semester: Number(semester),
-        attendance_percentage: Number(percentage),
-      });
+      const response = await api.post(
+        "/admin/attendance",
+        result.data
+      );
 
       setMessage(
         response.data.message || "Attendance added successfully"
@@ -120,7 +139,11 @@ export default function Attendance() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-1 flex-col"
+        noValidate
+      >
         <FieldGroup className="admin-form grid gap-4 sm:grid-cols-2">
           {/* Faculty */}
           <Field>
@@ -154,6 +177,7 @@ export default function Attendance() {
               disabled={!faculty}
               required
               className={selectClass}
+              aria-invalid={!!errors.semester}
             >
               <option value="">
                 {faculty ? "Select Semester" : "Select Faculty First"}
@@ -165,6 +189,8 @@ export default function Attendance() {
                 </option>
               ))}
             </select>
+
+            <FieldError>{errors.semester}</FieldError>
           </Field>
 
           {/* Student */}
@@ -178,6 +204,7 @@ export default function Attendance() {
               disabled={!semester}
               required
               className={selectClass}
+              aria-invalid={!!errors.student}
             >
               <option value="">
                 {semester ? "Select Student" : "Select Semester First"}
@@ -189,6 +216,8 @@ export default function Attendance() {
                 </option>
               ))}
             </select>
+
+            <FieldError>{errors.student}</FieldError>
           </Field>
 
           {/* Attendance Percentage */}
@@ -207,7 +236,10 @@ export default function Attendance() {
               value={percentage}
               onChange={(e) => setPercentage(e.target.value)}
               required
+              aria-invalid={!!errors.attendance_percentage}
             />
+
+            <FieldError>{errors.attendance_percentage}</FieldError>
           </Field>
         </FieldGroup>
 

@@ -1,20 +1,32 @@
 import { Request, Response } from "express";
 import Teacher from "../models/Teacher";
+import {
+  createTeacherSchema,
+  zodMessage,
+} from "../validators/admin.validator";
 
 export const createTeacher = async (
   req: Request,
   res: Response
 ) => {
   try {
-    const { name, email, courses } = req.body;
+    const result = createTeacherSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        message: zodMessage(result.error),
+      });
+    }
+
+    const { name, email, courses } = result.data;
 
     const teacher = await Teacher.create({
       name,
       email,
-      courses: Array.isArray(courses)
-        ? courses
-        : courses
-        ? [courses]
+      courses: courses
+        ? Array.isArray(courses)
+          ? courses
+          : [courses]
         : [],
       picture: req.file
         ? `/uploads/${req.file.filename}`

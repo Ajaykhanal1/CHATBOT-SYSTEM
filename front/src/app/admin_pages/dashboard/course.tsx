@@ -5,9 +5,14 @@ import axios from "axios";
 
 import { api } from "@/lib/axios/axios";
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup } from "@/components/ui/field";
+import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  courseSchema,
+  toFieldErrors,
+  type FieldErrors,
+} from "@/lib/validations/admin";
 
 interface Teacher {
   _id: string;
@@ -17,6 +22,7 @@ interface Teacher {
 export default function Course() {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState<FieldErrors>({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -40,21 +46,27 @@ export default function Course() {
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    const teacher = formData.get("teacher") as string;
+    const result = courseSchema.safeParse({
+      code: String(formData.get("code") ?? ""),
+      name: String(formData.get("name") ?? ""),
+      semester: formData.get("semester"),
+      faculty: String(formData.get("faculty") ?? ""),
+      teacher: formData.get("teacher") || undefined,
+    });
 
-    const courseData = {
-      code: formData.get("code") as string,
-      name: formData.get("name") as string,
-      semester: Number(formData.get("semester")),
-      ...(teacher && { teacher }),
-      faculty: formData.get("faculty") as string,
-    };
+    if (!result.success) {
+      setErrors(toFieldErrors(result.error));
+      setMessage("Please fix the highlighted fields.");
+      return;
+    }
+
+    setErrors({});
 
     try {
       setLoading(true);
       setMessage("");
 
-      const { data } = await api.post("/admin/courses", courseData);
+      const { data } = await api.post("/admin/courses", result.data);
 
       setMessage(data.message || "Course added successfully");
 
@@ -88,7 +100,11 @@ export default function Course() {
         </p>
       </div>
 
-      <form onSubmit={addCourse} className="flex flex-1 flex-col">
+      <form
+        onSubmit={addCourse}
+        className="flex flex-1 flex-col"
+        noValidate
+      >
         <FieldGroup className="admin-form grid gap-4 sm:grid-cols-2">
           {/* Course Name */}
           <Field className="sm:col-span-2">
@@ -101,7 +117,10 @@ export default function Course() {
               placeholder="e.g. Database Management System"
               minLength={2}
               required
+              aria-invalid={!!errors.name}
             />
+
+            <FieldError>{errors.name}</FieldError>
           </Field>
 
           {/* Course Code */}
@@ -114,7 +133,10 @@ export default function Course() {
               type="text"
               placeholder="e.g. CS101"
               required
+              aria-invalid={!!errors.code}
             />
+
+            <FieldError>{errors.code}</FieldError>
           </Field>
 
           {/* Semester */}
@@ -129,7 +151,10 @@ export default function Course() {
               max={8}
               placeholder="Enter semester (1-8)"
               required
+              aria-invalid={!!errors.semester}
             />
+
+            <FieldError>{errors.semester}</FieldError>
           </Field>
 
           {/* Faculty */}
@@ -141,6 +166,7 @@ export default function Course() {
               name="faculty"
               className={selectClass}
               required
+              aria-invalid={!!errors.faculty}
             >
               <option value="">Select Faculty</option>
               <option value="BCA">BCA</option>
@@ -149,6 +175,8 @@ export default function Course() {
               <option value="BIM">BIM</option>
               <option value="BBA">BBA</option>
             </select>
+
+            <FieldError>{errors.faculty}</FieldError>
           </Field>
 
           {/* Teacher */}
@@ -159,6 +187,7 @@ export default function Course() {
               id="teacher"
               name="teacher"
               className={selectClass}
+              aria-invalid={!!errors.teacher}
             >
               <option value="">Select Teacher</option>
 
@@ -168,6 +197,8 @@ export default function Course() {
                 </option>
               ))}
             </select>
+
+            <FieldError>{errors.teacher}</FieldError>
           </Field>
         </FieldGroup>
 
