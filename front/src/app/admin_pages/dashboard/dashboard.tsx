@@ -5,7 +5,8 @@ import { api } from "@/lib/axios/axios";
 import axios from "axios";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, Menu, X } from "lucide-react";
+import Link from "next/link";
+import { LogOut, Menu, MessageSquare, X } from "lucide-react";
 import Student from "./student";
 import Teacher from "./teacher";
 import Course from "./course";
@@ -107,6 +108,17 @@ export default function Dashboard() {
     </div>
   );
 
+  const chatLink = (
+    <Link
+      href="/chat"
+      onClick={() => setSidebarOpen(false)}
+      className="flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+    >
+      <MessageSquare className="h-4 w-4" />
+      Open Chat
+    </Link>
+  );
+
   return (
     <div className="admin-scale relative flex h-screen flex-col overflow-hidden bg-background text-foreground">
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[880px] bg-noise" />
@@ -146,9 +158,12 @@ export default function Dashboard() {
 
           <div className="grid h-full gap-3 md:grid-cols-[200px_1fr] lg:grid-cols-[280px_1fr]">
             {/* Sidebar */}
-            <aside className="relative hidden overflow-hidden rounded-3xl border border-white/10 bg-card/40 p-2 shadow-2xl backdrop-blur-xl md:block">
+            <aside className="relative hidden flex-col overflow-hidden rounded-3xl border border-white/10 bg-card/40 p-2 shadow-2xl backdrop-blur-xl md:flex">
               <div className="absolute -top-20 right-0 h-40 w-40 rounded-full bg-primary/20 blur-3xl" />
-              {tabList}
+              <div className="relative flex-1 overflow-y-auto">{tabList}</div>
+              <div className="relative mt-2 border-t border-white/5 p-1.5">
+                {chatLink}
+              </div>
             </aside>
 
             {/* Main Content */}
@@ -259,6 +274,7 @@ export default function Dashboard() {
             </button>
           </div>
           <div className="flex-1 overflow-y-auto p-2">{tabList}</div>
+          <div className="border-t border-white/5 p-2">{chatLink}</div>
         </aside>
       </div>
     </div>
