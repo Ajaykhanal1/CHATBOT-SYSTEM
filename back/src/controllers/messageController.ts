@@ -20,6 +20,11 @@ import {
   getStudentAttendance,
   getAllTeachers,
   getLatestNotices,
+  getAllStudentsWithDetails,
+  getAllCourses,
+  getAllNotices,
+  getAllAttendance,
+  getAttendanceBySemester,
 } from "../services/collegeQueryService";
 
 const emitToUser = (userId: string, event: string, payload: unknown) => {
@@ -82,8 +87,29 @@ const getStudentFromQuestion = async (question: string) => {
   return student ? getStudentByName(student.name) : null;
 };
 
-const getDatabaseResult = async (question: string, email: string) => {
+const getCoursesFromQuestion = async (question: string) => {
+  const courses = await getAllCourses();
+
+  return courses.filter((course: any) =>
+    [course?.name, course?.code]
+      .filter(Boolean)
+      .some((value: string) => {
+        const escaped = String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        return new RegExp(`\\b${escaped}\\b`, "i").test(question);
+      })
+  );
+};
+
+const isAdminRole = (role: string) =>
+  role === "admin" || role === "super_admin";
+
+const getDatabaseResult = async (
+  question: string,
+  email: string,
+  role: string
+) => {
   const parsed = parseQuestion(question);
+  const isAdmin = isAdminRole(role);
 
   switch (parsed.type) {
     case "student_count":
@@ -92,29 +118,95 @@ const getDatabaseResult = async (question: string, email: string) => {
         : getTotalStudentCount();
 
     case "students_by_semester":
+      if (parsed.semester === undefined) return null;
+
+      if (isAdmin) {
+        const students = await getAllStudentsWithDetails();
+        return students.filter(
+          (student: any) => student.semester === parsed.semester
+        );
+      }
+
+      return getStudentsBySemester(parsed.semester);
+
+    case "all_students":
+      if (isAdmin) return getAllStudentsWithDetails();
+      return (await getStudentFromQuestion(question)) ?? getStudentData(email);
+
+    case "all_teachers":
+      return isAdmin ? getAllTeachers() : getTeachersFromQuestion(question);
+
+    case "all_courses":
+      if (isAdmin) return getAllCourses();
+      return (await getStudentFromQuestion(question)) ?? getStudentData(email);
+
+    case "all_notices":
+      return isAdmin ? getAllNotices() : getLatestNotices();
+
+    case "all_attendance":
+      if (!isAdmin) {
+        return getStudentAttendance(parsed.studentName || email);
+      }
+
       return parsed.semester !== undefined
-        ? getStudentsBySemester(parsed.semester)
-        : null;
+        ? getAttendanceBySemester(parsed.semester)
+        : getAllAttendance();
 
     case "gpa":
-    case "courses":
-    case "student":
+    case "student": {
       if (parsed.studentName) {
         const student = await getStudentByName(parsed.studentName);
         if (student) return student;
       }
 
-      return (await getStudentFromQuestion(question)) ?? getStudentData(email);
+      const student = await getStudentFromQuestion(question);
+      if (student) return student;
 
-    case "attendance":
+      return isAdmin ? getAllStudentsWithDetails() : getStudentData(email);
+    }
+
+    case "courses": {
+      if (parsed.studentName) {
+        const student = await getStudentByName(parsed.studentName);
+        if (student) return student;
+      }
+
+      const courses = await getCoursesFromQuestion(question);
+      if (courses.length) return courses;
+
+      const student = await getStudentFromQuestion(question);
+      if (student) return student;
+
+      return isAdmin ? getAllCourses() : getStudentData(email);
+    }
+
+    case "attendance": {
+      if (parsed.studentName) {
+        const student = await getStudentByName(parsed.studentName);
+        if (student) return student;
+      }
+
+      const student = await getStudentFromQuestion(question);
+      if (student) return student;
+
+      if (isAdmin) {
+        return parsed.semester !== undefined
+          ? getAttendanceBySemester(parsed.semester)
+          : getAllAttendance();
+      }
+
       return getStudentAttendance(parsed.studentName || email);
+    }
 
     case "teacher":
-    case "teacher_info":
-      return getTeachersFromQuestion(question);
+    case "teacher_info": {
+      const teachers = await getTeachersFromQuestion(question);
+      if (teachers.length || !isAdmin) return teachers;
+      return getAllTeachers();
+    }
 
     case "notice":
-      return getLatestNotices();
+      return isAdmin ? getAllNotices() : getLatestNotices();
 
     default:
       return getStudentFromQuestion(question);
@@ -139,13 +231,14 @@ const getPictures = (result: unknown): string[] => {
 const buildPrompt = async (
   chatId: string,
   question: string,
-  email: string
+  email: string,
+  role: string
 ) => {
   const [previousMessages, results, databaseResult, studentData] =
     await Promise.all([
       Message.find({ chatId }).sort({ createdAt: 1 }),
       searchQdrant(question),
-      getDatabaseResult(question, email),
+      getDatabaseResult(question, email, role),
       getStudentData(email),
     ]);
 
@@ -188,6 +281,11 @@ IMPORTANT RULES:
 - Use Markdown only when it improves readability.
 - Do not unnecessarily repeat the user's question.
 - For casual conversation, respond naturally.
+${
+  isAdminRole(role)
+    ? '- This user is an administrator. The DATABASE RESULT may contain complete record lists; present every record clearly, using Markdown tables when there are multiple records.'
+    : ""
+}
 
 DATABASE RESULT:
 ${JSON.stringify(databaseResult, null, 2)}
@@ -256,7 +354,8 @@ const streamReply = async (
     const promptResult = await buildPrompt(
       chatId,
       userMessage.content,
-      req.user.email
+      req.user.email,
+      req.user.role
     );
     images = promptResult.images;
 

@@ -13,6 +13,11 @@ export type QuestionType =
   | "course"
   | "teacher_info"
   | "notice"
+  | "all_students"
+  | "all_teachers"
+  | "all_courses"
+  | "all_notices"
+  | "all_attendance"
   | "unknown";
 
 // ─────────────────────────────────────────────────────────────
@@ -114,6 +119,15 @@ const STOPWORDS = new Set([
   "information",
   "profile",
 
+  "all",
+  "every",
+  "each",
+  "list",
+  "complete",
+  "full",
+  "records",
+  "data",
+
   "teacher",
   "professor",
   "faculty",
@@ -155,6 +169,11 @@ const isPlausibleName = (name: string): boolean => {
   }
 
   const lower = value.toLowerCase();
+
+  // Query words are not names, e.g. "all students"
+  if (/^(all|every|each|list|complete|full)\b/i.test(value)) {
+    return false;
+  }
 
   // Entire value is a stopword
   if (STOPWORDS.has(lower)) {
@@ -469,7 +488,8 @@ export const extractSemester = (
 // ─────────────────────────────────────────────────────────────
 
 export const detectQuestionType = (
-  question: string
+  question: string,
+  hasSpecificStudent = false
 ): QuestionType => {
   if (!question?.trim()) {
     return "unknown";
@@ -503,6 +523,58 @@ export const detectQuestionType = (
     )
   ) {
     return "students_by_semester";
+  }
+
+  // ─────────────────────────────────────────────
+  // Complete data listings (admin)
+  // ─────────────────────────────────────────────
+
+  const wantsAll = /\b(?:all|every)\b/i.test(text);
+  const listAll = (pattern: string) =>
+    new RegExp(
+      `\\blist\\s+(?:all\\s+)?(?:the\\s+)?(?:${pattern})\\b`,
+      "i"
+    ).test(text);
+
+  if (!hasSpecificStudent) {
+    if (
+      (wantsAll && /\battendance\b|\battend\b/i.test(text)) ||
+      listAll("attendance")
+    ) {
+      return "all_attendance";
+    }
+
+    if (
+      (wantsAll && /\bnotices?\b|\bannouncements?\b/i.test(text)) ||
+      listAll("notices?|announcements?")
+    ) {
+      return "all_notices";
+    }
+
+    if (
+      (wantsAll &&
+        /\bcourses?\b|\bsubjects?\b|\bclasses?\b/i.test(text)) ||
+      listAll("courses?|subjects?|classes?")
+    ) {
+      return "all_courses";
+    }
+
+    if (
+      (wantsAll &&
+        /\bteachers?\b|\bprofessors?\b|\binstructors?\b|\bfaculty\b/i.test(
+          text
+        )) ||
+      listAll("teachers?|professors?|instructors?|faculty")
+    ) {
+      return "all_teachers";
+    }
+
+    if (
+      (wantsAll && /\bstudents?\b/i.test(text)) ||
+      listAll("students?")
+    ) {
+      return "all_students";
+    }
   }
 
   // ─────────────────────────────────────────────
@@ -598,9 +670,12 @@ export const parseQuestion = (
     };
   }
 
-  const type = detectQuestionType(question);
-
   const studentName = extractStudentName(question);
+
+  const type = detectQuestionType(
+    question,
+    Boolean(studentName)
+  );
 
   const semester = extractSemester(question);
 

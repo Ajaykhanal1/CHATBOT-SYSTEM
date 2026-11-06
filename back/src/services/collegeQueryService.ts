@@ -72,6 +72,28 @@ export const getAllStudents = async () => {
     .lean();
 };
 
+// Get every student with courses, teachers, and attendance (admin use)
+export const getAllStudentsWithDetails = async () => {
+  const [students, attendances] = await Promise.all([
+    Student.find()
+      .populate({
+        path: "courses",
+        populate: {
+          path: "teacher",
+        },
+      })
+      .lean(),
+    Attendance.find().lean(),
+  ]);
+
+  return students.map((student) => ({
+    ...student,
+    attendance: attendances.filter(
+      (record) => String(record.student) === String(student._id),
+    ),
+  }));
+};
+
 // Count all students
 export const getTotalStudentCount = async () => {
   return await Student.countDocuments();
@@ -116,7 +138,16 @@ export const getAttendanceBySemester = async (
 ) => {
   return await Attendance.find({
     semester,
-  }).lean();
+  })
+    .populate("student")
+    .lean();
+};
+
+// Get every attendance record with student details (admin use)
+export const getAllAttendance = async () => {
+  return await Attendance.find()
+    .populate("student")
+    .lean();
 };
 
 // =========================
@@ -160,7 +191,9 @@ export const getTeacherByName = async (
       $regex: name,
       $options: "i",
     },
-  }).lean();
+  })
+    .populate("courses")
+    .lean();
 };
 
 // =========================
