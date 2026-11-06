@@ -264,6 +264,14 @@
   .admin-form :is(input, select) {
     height: calc(var(--spacing) * 10);
   }
+  /* Chrome recolors autofilled inputs; freeze its background animation so the field keeps its own bg */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    transition: background-color 600000s 0s;
+    -webkit-text-fill-color: var(--foreground);
+  }
   /* Native dropdown lists ignore the transparent select background and fall back to white */
   .admin-form select {
     background-color: var(--background);
