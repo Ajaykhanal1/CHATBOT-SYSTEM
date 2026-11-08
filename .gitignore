@@ -2,6 +2,6 @@ back/.env
 
 front/src/.env
 
-Hello 
+node_modules/
 
 back/uploads

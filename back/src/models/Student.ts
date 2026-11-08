@@ -6,6 +6,7 @@ export interface IStudent extends Document {
     email: string;
     rollNumber: string;
     semester: number;
+    faculty: string;
     gpa: number;
     courses: mongoose.Types.ObjectId[];
     picture?: string;
@@ -41,6 +42,11 @@ const studentSchema = new Schema<IStudent>(
 
         semester: {
             type: Number,
+            required: true,
+        },
+
+        faculty: {
+            type: String,
             required: true,
         },
 

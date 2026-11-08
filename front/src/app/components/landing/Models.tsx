@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const models = [
   {
     name: "GPT",
@@ -39,7 +41,7 @@ export default function Models() {
 
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {models.map((model) => (
-            <a
+            <Link
               key={model.name}
               href="/chat"
               className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 backdrop-blur transition-all hover:-translate-y-1 hover:border-white/20 hover:shadow-xl hover:shadow-primary/10"
@@ -57,7 +59,7 @@ export default function Models() {
                 Try model
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

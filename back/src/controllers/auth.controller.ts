@@ -3,8 +3,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { ZodError } from "zod";
-import { OAuth2Client } from "google-auth-library";
-
 import { User, IUser } from "../models/user.model";
 import Student from "../models/Student";
 import {
@@ -15,8 +13,6 @@ import {
 
 import crypto from "crypto";
 import { sendResetEmail } from "../config/mailer";
-
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 class RegisterConflict extends Error {}
 
@@ -261,10 +257,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    if (error instanceof Error && error.name === "ZodError") {
+    if (error instanceof ZodError) {
       res.status(400).json({
         success: false,
-        message: "Invalid registration data.",
+        message:
+          error.issues[0]?.message ?? "Invalid registration data.",
       });
 
       return;
@@ -287,7 +284,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       $or: [{ email: identifier }, { name: identifier }],
     }).select("+password");
 
-    if (!user) {
+    // Google-only accounts have no password; treat them like bad credentials.
+    if (!user || !user.password) {
       res.status(401).json({
         success: false,
         message: "Invalid email or password.",

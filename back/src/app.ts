@@ -12,6 +12,7 @@ import attendanceRoutes from "./routes/attendanceRoutes";
 import noticeRoutes from "./routes/noticeRoutes";
 import collegeQueryRoutes from "./routes/collegeQueryRoutes";
 import userRoutes from "./routes/userRoutes";
+import { authMiddleware, adminMiddleware } from "./middleware/authMiddleware";
 
 
 
@@ -42,6 +43,8 @@ app.use("/chats", chatRoutes);
 app.use("/messages", messageRoutes);
 app.use("/documents", documentRoutes);
 
+
+app.use("/admin", authMiddleware, adminMiddleware);
 
 app.use("/admin/students", studentRoutes);
 app.use("/admin/courses", courseRoutes);

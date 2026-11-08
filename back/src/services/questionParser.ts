@@ -622,6 +622,18 @@ export const detectQuestionType = (
   }
 
   // ─────────────────────────────────────────────
+  // Notice (before "student": both match the word "about")
+  // ─────────────────────────────────────────────
+
+  if (
+    /\bnotice\b|\bnotices\b|\bannouncement\b|\bannouncements\b/i.test(
+      text,
+    )
+  ) {
+    return "notice";
+  }
+
+  // ─────────────────────────────────────────────
   // Student Information
   // ─────────────────────────────────────────────
 
@@ -631,15 +643,6 @@ export const detectQuestionType = (
     )
   ) {
     return "student";
-  }
-
-    // Notice
-  if (
-    /\bnotice\b|\bnotices\b|\bannouncement\b|\bannouncements\b/i.test(
-      text,
-    )
-  ) {
-    return "notice";
   }
 
   

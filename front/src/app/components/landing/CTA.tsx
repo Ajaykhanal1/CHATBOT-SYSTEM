@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function CTA() {
   return (
     <section id="contact" className="relative px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
@@ -15,20 +17,20 @@ export default function CTA() {
             Chat, create, research and solve with every leading model in one seamless platform.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <a
+            <Link
               href="/chat"
               className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-white px-8 py-3 text-base font-medium text-black shadow-xl shadow-white/10 transition-all hover:-translate-y-0.5"
             >
               <span className="relative z-10">Start Chatting</span>
               <span className="relative z-10 transition-transform group-hover:translate-x-1">→</span>
               <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-black/5 to-white/0 transition-transform duration-700 group-hover:translate-x-full" />
-            </a>
-            <a
+            </Link>
+            <Link
               href="/register"
               className="inline-flex items-center gap-2 rounded-full border border-white/30 px-8 py-3 text-base text-white backdrop-blur transition-all hover:border-white/60 hover:bg-white/10"
             >
               Create free account
-            </a>
+            </Link>
           </div>
         </div>
       </div>

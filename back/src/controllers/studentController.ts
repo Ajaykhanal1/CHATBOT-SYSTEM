@@ -19,7 +19,7 @@ export const createStudent = async (
             });
         }
 
-        const { name, email, rollNumber, semester, gpa, courses } =
+        const { name, email, rollNumber, semester, faculty, gpa, courses } =
             result.data;
 
         // Admin-created students are independent of any User account.
@@ -29,6 +29,7 @@ export const createStudent = async (
             email,
             rollNumber,
             semester,
+            faculty,
             gpa,
             courses: courses
                 ? Array.isArray(courses)

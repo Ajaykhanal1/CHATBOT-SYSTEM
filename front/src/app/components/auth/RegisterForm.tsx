@@ -7,6 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "../../../lib/axios/axios";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useAuthStore } from "@/app/store/authStore";
 
 import {
   registerSchema,
@@ -19,6 +21,7 @@ export default function RegisterForm() {
   const [apiError, setApiError] = useState("");
 
   const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
 
   const {
     register,
@@ -58,6 +61,48 @@ export default function RegisterForm() {
     }
   };
 
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setApiError("");
+      setIsLoading(true);
+
+      try {
+        const response = await api.post("/auth/google", {
+          credential: tokenResponse.access_token,
+        });
+
+        const { token, user } = response.data;
+
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+
+        setUser(user);
+
+        if (user.role === "admin") {
+          router.push("/admin_pages/dashboard");
+        } else {
+          router.push("/chat");
+        }
+      } catch (error: unknown) {
+        console.error("Google sign-up error:", error);
+
+        if (axios.isAxiosError(error)) {
+          setApiError(
+            error.response?.data?.message || "Google sign-up failed."
+          );
+        } else {
+          setApiError("Google sign-up failed.");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    },
+
+    onError: () => {
+      setApiError("Google sign-up failed.");
+    },
+  });
+
   return (
     <div className="flex min-h-[100dvh] items-center justify-center p-0 text-foreground md:px-8 md:py-10 lg:px-8 lg:py-12">
       <div className="w-full max-w-md md:max-w-2xl lg:max-w-md">
@@ -88,6 +133,7 @@ export default function RegisterForm() {
             <button
               type="button"
               disabled={isLoading}
+              onClick={() => googleLogin()}
               className="mt-3 flex w-full items-center justify-center gap-3 rounded-2xl border border-border/80 bg-secondary/60 px-4 py-2.5 md:mt-6 md:py-3 text-sm font-medium transition hover:bg-secondary md:text-lg lg:text-sm disabled:opacity-50"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">

@@ -105,12 +105,19 @@ export const getTotalStudentCount = async () => {
 // ATTENDANCE
 // =========================
 
+// Accepts a student name or the logged-in user's email (messageController
+// falls back to email when no name is in the question).
 export const getStudentAttendance = async (name: string) => {
   const student = await Student.findOne({
-    name: {
-      $regex: name,
-      $options: "i",
-    },
+    $or: [
+      {
+        name: {
+          $regex: name,
+          $options: "i",
+        },
+      },
+      { email: name.toLowerCase() },
+    ],
   }).lean();
 
   if (!student) {

@@ -19,6 +19,7 @@ interface Student {
   name: string;
   rollNumber: string;
   semester: number;
+  faculty: string;
 }
 
 export default function Attendance() {
@@ -48,9 +49,13 @@ export default function Attendance() {
     getStudents();
   }, []);
 
-  // Students of selected semester
+  // Students of selected faculty and semester; legacy records have no faculty.
   const filteredStudents = students
-    .filter((item) => item.semester === Number(semester))
+    .filter(
+      (item) =>
+        (!item.faculty || item.faculty === faculty) &&
+        item.semester === Number(semester)
+    )
     .sort((a, b) => a.name.localeCompare(b.name));
 
   // Faculty change

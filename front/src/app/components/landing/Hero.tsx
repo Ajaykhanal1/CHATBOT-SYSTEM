@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Hero() {
   return (
     <section className="relative px-4 pb-16 pt-28 text-center sm:px-6 sm:pb-20 sm:pt-36 lg:px-8">
@@ -21,14 +23,14 @@ export default function Hero() {
         </p>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <a
+          <Link
             href="/chat"
             className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-primary to-accent px-8 py-3 text-base font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 hover:shadow-primary/40"
           >
             <span className="relative z-10">Start Chatting</span>
             <span className="relative z-10 transition-transform group-hover:translate-x-1">→</span>
             <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/25 to-white/0 transition-transform duration-700 group-hover:translate-x-full" />
-          </a>
+          </Link>
           <a
             href="#models"
             className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-8 py-3 text-base text-foreground backdrop-blur transition-all hover:border-white/20 hover:bg-white/10"
