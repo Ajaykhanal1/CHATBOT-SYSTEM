@@ -50,7 +50,7 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
         htmlFor="theme-dark"
         className="cursor-pointer whitespace-nowrap text-xs font-medium text-muted-foreground sm:text-sm"
       >
-        Dark mode
+        {mounted && isDark ? "Dark" : "Light"}
       </Label>
     </div>
   );
