@@ -36,7 +36,7 @@ export default function Pricing() {
     <section id="pricing" className="relative px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
       <div className="mx-auto w-full max-w-[1200px]">
         <div className="text-center">
-          <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-muted-foreground">
+          <span className="inline-flex rounded-full border border-border bg-muted/50 px-4 py-1.5 text-sm text-muted-foreground">
             Simple, transparent pricing
           </span>
           <h2 className="mt-6 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
@@ -53,12 +53,12 @@ export default function Pricing() {
               key={plan.name}
               className={`relative flex h-full flex-col overflow-hidden rounded-2xl border backdrop-blur transition-all hover:-translate-y-1 sm:rounded-3xl ${
                 plan.popular
-                  ? "border-primary/60 bg-gradient-to-b from-primary/20 via-white/10 to-white/5 shadow-xl shadow-primary/20"
-                  : "border-white/10 bg-gradient-to-b from-white/10 to-white/5"
+                  ? "border-primary/60 bg-gradient-to-b from-primary/10 via-muted to-muted/40 shadow-xl shadow-primary/20"
+                  : "border-border bg-gradient-to-b from-muted to-muted/40"
               }`}
             >
               {plan.popular && (
-                <div className="absolute right-2 top-2 rounded-full bg-gradient-to-r from-primary to-accent px-2 py-0.5 text-[8px] font-medium text-primary-foreground sm:right-6 sm:top-6 sm:px-3 sm:py-1 sm:text-xs">
+                <div className="absolute right-2 top-2 rounded-full bg-gradient-to-r from-primary to-primary/80 px-2 py-0.5 text-[8px] font-medium text-primary-foreground sm:right-6 sm:top-6 sm:px-3 sm:py-1 sm:text-xs">
                   Most popular
                 </div>
               )}
@@ -73,8 +73,8 @@ export default function Pricing() {
                   href={plan.href || "/register"}
                   className={`mt-3 inline-flex w-full items-center justify-center rounded-full px-3 py-2 text-xs font-medium transition-all sm:mt-6 sm:px-6 sm:py-3 sm:text-sm lg:mt-8 ${
                     plan.popular
-                      ? "bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-primary/40"
-                      : "border border-white/10 bg-white/5 text-foreground hover:border-white/20 hover:bg-white/10"
+                      ? "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-primary/40"
+                      : "border border-border bg-muted/50 text-foreground hover:border-foreground/20 hover:bg-accent"
                   }`}
                 >
                   {plan.button}
@@ -82,7 +82,7 @@ export default function Pricing() {
                 <ul className="mt-3 flex flex-1 flex-col gap-1.5 text-[10px] text-muted-foreground sm:mt-6 sm:gap-2 sm:text-sm lg:mt-8">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2">
-                      <span className="mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary/80 to-accent/80 text-[8px] text-primary-foreground sm:h-5 sm:w-5 sm:text-[10px]">
+                      <span className="mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-primary/80 to-primary/60 text-[8px] text-primary-foreground sm:h-5 sm:w-5 sm:text-[10px]">
                         ✓
                       </span>
                       <span className="leading-snug">{feature}</span>

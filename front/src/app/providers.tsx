@@ -1,6 +1,7 @@
 "use client";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 
 export default function Providers({
   children,
@@ -11,7 +12,7 @@ export default function Providers({
     <GoogleOAuthProvider
       clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
     >
-      {children}
+      <ThemeProvider>{children}</ThemeProvider>
     </GoogleOAuthProvider>
   );
 }

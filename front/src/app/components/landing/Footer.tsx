@@ -2,16 +2,16 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-white/5 px-4 py-12 sm:px-6 lg:px-8">
+    <footer className="relative border-t border-border px-4 py-12 sm:px-6 lg:px-8">
       <div className="absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
       <div className="mx-auto w-full max-w-[1200px]">
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 text-lg font-semibold">
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-gradient-to-r from-primary to-accent">
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-gradient-to-r from-primary to-primary/80">
                 <span className="absolute inset-0 animate-ping rounded-full bg-primary/60" />
               </span>
-              <span className="bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
                 MyChat
               </span>
             </div>
@@ -65,7 +65,7 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-6 text-center text-sm text-muted-foreground sm:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-center text-sm text-muted-foreground sm:flex-row">
           <p>© 2026 MyChat. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <Link href="/privacy-policy" className="transition-colors hover:text-foreground">

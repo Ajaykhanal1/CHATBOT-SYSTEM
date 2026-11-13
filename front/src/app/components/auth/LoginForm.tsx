@@ -283,7 +283,7 @@ export default function LoginForm() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-2.5 md:py-3 md:text-lg font-medium text-primary-foreground lg:text-base transition hover:opacity-90 disabled:opacity-50 lg:py-3"
+                className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-primary/80 px-4 py-2.5 md:py-3 md:text-lg font-medium text-primary-foreground lg:text-base transition hover:opacity-90 disabled:opacity-50 lg:py-3"
               >
                 {isLoading ? (
                   <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground/60 border-t-transparent" />

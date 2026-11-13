@@ -67,7 +67,7 @@ export default function Features() {
     <section id="features" className="relative px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
       <div className="mx-auto w-full max-w-[1200px]">
         <div className="text-center">
-          <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-muted-foreground">
+          <span className="inline-flex rounded-full border border-border bg-muted/50 px-4 py-1.5 text-sm text-muted-foreground">
             Everything in one place
           </span>
           <h2 className="mt-6 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
@@ -82,10 +82,10 @@ export default function Features() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 backdrop-blur transition-all hover:-translate-y-1 hover:border-white/20"
+              className="group relative overflow-hidden rounded-3xl border border-border bg-gradient-to-b from-muted to-muted/40 p-6 backdrop-blur transition-all hover:-translate-y-1 hover:border-foreground/20"
             >
               <div className="absolute -right-12 -top-12 h-28 w-28 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 blur-3xl" />
-              <div className="relative mb-5 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-foreground">
+              <div className="relative mb-5 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-border bg-muted/60 text-foreground">
                 {feature.icon}
               </div>
               <h3 className="relative text-lg font-semibold">{feature.title}</h3>

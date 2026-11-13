@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { api } from "@/lib/axios/axios";
 import ModelSelector from "./ModelSelector";
 import ChatSidebar from "./ChatSidebar";
+import ThemeToggle from "@/components/theme/theme-toggle";
 
 export default function ChatHeader({ chatId }: { chatId?: string }) {
   const [clearing, setClearing] = useState(false);
@@ -44,20 +45,23 @@ export default function ChatHeader({ chatId }: { chatId?: string }) {
         <ModelSelector />
       </div>
 
-      {chatId ? (
-        <button
-          type="button"
-          onClick={handleClear}
-          disabled={clearing}
-          className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:opacity-50"
-          title="Clear conversation"
-        >
-          <Eraser className="h-4 w-4" />
-          <span className="hidden sm:inline">
-            {clearing ? "Clearing..." : "Clear"}
-          </span>
-        </button>
-      ) : null}
+      <div className="flex items-center gap-2">
+        {chatId ? (
+          <button
+            type="button"
+            onClick={handleClear}
+            disabled={clearing}
+            className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:opacity-50"
+            title="Clear conversation"
+          >
+            <Eraser className="h-4 w-4" />
+            <span className="hidden sm:inline">
+              {clearing ? "Clearing..." : "Clear"}
+            </span>
+          </button>
+        ) : null}
+        <ThemeToggle />
+      </div>
     </header>
   );
 }

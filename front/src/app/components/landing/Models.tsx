@@ -28,7 +28,7 @@ export default function Models() {
     <section id="models" className="relative px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
       <div className="mx-auto w-full max-w-[1200px]">
         <div className="text-center">
-          <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-muted-foreground">
+          <span className="inline-flex rounded-full border border-border bg-muted/50 px-4 py-1.5 text-sm text-muted-foreground">
             Unified Model Access
           </span>
           <h2 className="mt-6 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
@@ -44,7 +44,7 @@ export default function Models() {
             <Link
               key={model.name}
               href="/chat"
-              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 backdrop-blur transition-all hover:-translate-y-1 hover:border-white/20 hover:shadow-xl hover:shadow-primary/10"
+              className="group relative overflow-hidden rounded-3xl border border-border bg-gradient-to-b from-muted to-muted/40 p-6 backdrop-blur transition-all hover:-translate-y-1 hover:border-foreground/20 hover:shadow-xl hover:shadow-primary/10"
             >
               <div
                 className="absolute -right-10 -top-10 h-24 w-24 rounded-full bg-gradient-to-br opacity-30 blur-3xl transition-opacity group-hover:opacity-60"

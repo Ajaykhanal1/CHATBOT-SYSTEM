@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useAuthStore } from "@/app/store/authStore";
 import { useRouter } from "next/navigation";
+import ThemeToggle from "@/components/theme/theme-toggle";
 
 export default function Navbar() {
   const user = useAuthStore((state) => state.user);
@@ -17,13 +18,13 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-white/5 bg-background/70 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+    <nav className="fixed top-0 z-50 w-full border-b border-border bg-background/70 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center justify-between gap-2 px-2 sm:gap-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-gradient-to-r from-primary to-accent">
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-gradient-to-r from-primary to-primary/80">
             <span className="absolute inset-0 animate-ping rounded-full bg-primary/60" />
           </span>
-          <span className="bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
             MyChat
           </span>
         </Link>
@@ -46,7 +47,8 @@ export default function Navbar() {
           </a>
         </div>
 
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-0.5 sm:gap-2">
+          <ThemeToggle />
           {user ? (
             <>
               <span className="hidden lg:inline-flex items-center rounded-full px-4 py-2 text-sm text-muted-foreground">
@@ -77,7 +79,7 @@ export default function Navbar() {
           )}
           <Link
             href={user?.role === "admin" ? "/admin_pages/dashboard" : "/chat"}
-            className="group relative inline-flex items-center gap-1 overflow-hidden rounded-full bg-gradient-to-r from-primary to-accent px-3 py-1.5 text-xs font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:shadow-primary/40 lg:gap-2 lg:px-5 lg:py-2.5 lg:text-sm"
+            className="group relative inline-flex items-center gap-1 overflow-hidden rounded-full bg-gradient-to-r from-primary to-primary/80 px-3 py-1.5 text-xs font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:shadow-primary/40 lg:gap-2 lg:px-5 lg:py-2.5 lg:text-sm"
           >
             <span className="relative z-10">
               {user ? (user.role === "admin" ? "Admin Dashboard" : "Go to Chat") : "Try Now"}

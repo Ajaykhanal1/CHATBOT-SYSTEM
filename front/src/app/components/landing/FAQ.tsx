@@ -37,7 +37,7 @@ export default function FAQ() {
     <section id="faq" className="relative px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
       <div className="mx-auto w-full max-w-[1200px]">
         <div className="text-center">
-          <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-muted-foreground">
+          <span className="inline-flex rounded-full border border-border bg-muted/50 px-4 py-1.5 text-sm text-muted-foreground">
             FAQs
           </span>
           <h2 className="mt-6 text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
@@ -55,7 +55,7 @@ export default function FAQ() {
               <div
                 key={faq.question}
                 className={`overflow-hidden rounded-3xl border backdrop-blur transition-all ${
-                  isOpen ? "border-white/20 bg-gradient-to-b from-white/10 to-white/5" : "border-white/10 bg-gradient-to-b from-white/10 to-white/5"
+                  isOpen ? "border-foreground/20 bg-gradient-to-b from-muted to-muted/40" : "border-border bg-gradient-to-b from-muted to-muted/40"
                 }`}
               >
                 <button
@@ -63,7 +63,7 @@ export default function FAQ() {
                   className="flex w-full items-center justify-between gap-4 p-6 text-left"
                 >
                   <span className="text-base font-medium">{faq.question}</span>
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-lg transition-transform group-open:rotate-45">
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border text-lg transition-transform group-open:rotate-45">
                     {isOpen ? "−" : "+"}
                   </span>
                 </button>

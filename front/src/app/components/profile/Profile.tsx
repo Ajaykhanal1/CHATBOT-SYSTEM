@@ -15,6 +15,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ArrowLeft, Mail, Calendar, Shield, LogOut } from "lucide-react";
+import ThemeToggle from "@/components/theme/theme-toggle";
 
 export default function Profile() {
   const router = useRouter();
@@ -50,9 +51,12 @@ export default function Profile() {
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
             Back to Chat
           </Link>
-          <Link href="/" className="text-sm font-medium">
-            MyChat
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/" className="text-sm font-medium">
+              MyChat
+            </Link>
+            <ThemeToggle />
+          </div>
         </div>
 
         <div className="overflow-hidden rounded-lg border border-border">

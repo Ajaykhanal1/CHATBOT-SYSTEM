@@ -115,7 +115,7 @@ export default function ForgotForm() {
               </div>
 
               {successMessage && (
-                <div className="rounded-2xl border border-emerald-400/40 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-300 md:text-lg lg:text-sm">
+                <div className="rounded-2xl border border-emerald-400/40 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-600 dark:text-emerald-300 md:text-lg lg:text-sm">
                   {successMessage}
                 </div>
               )}
@@ -129,7 +129,7 @@ export default function ForgotForm() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-2.5 md:py-3 md:text-lg font-medium text-primary-foreground lg:text-base transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 lg:py-3"
+                className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-primary/80 px-4 py-2.5 md:py-3 md:text-lg font-medium text-primary-foreground lg:text-base transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 lg:py-3"
               >
                 {isLoading ? (
                   <>
