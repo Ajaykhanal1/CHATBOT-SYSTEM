@@ -1,3 +1,5 @@
+import PlanAction from "../payments/PlanAction";
+
 const plans = [
   {
     name: "Free",
@@ -7,6 +9,7 @@ const plans = [
     features: ["Basic AI conversations", "Limited messages", "Chat history", "Basic models"],
     button: "Get Started",
     href: "/chat",
+    planId: null,
     popular: false,
   },
   {
@@ -16,7 +19,8 @@ const plans = [
     description: "For students, developers and professionals.",
     features: ["More AI messages", "Advanced AI models", "Document uploads", "Image generation", "Web search", "Priority access"],
     button: "Start Pro",
-    href: "/register",
+    href: "/payment?plan=pro",
+    planId: "pro" as const,
     popular: true,
   },
   {
@@ -26,7 +30,8 @@ const plans = [
     description: "For teams building with AI.",
     features: ["Everything in Pro", "Higher usage limits", "Team workspace", "Advanced administration", "Priority support", "API access"],
     button: "Choose Business",
-    href: "/register",
+    href: "/payment?plan=business",
+    planId: "business" as const,
     popular: false,
   },
 ];
@@ -48,7 +53,14 @@ export default function Pricing() {
         </div>
 
         <div className="mt-6 grid grid-cols-3 gap-2 sm:mt-12 sm:gap-4 lg:grid-cols-3">
-          {plans.map((plan) => (
+          {plans.map((plan) => {
+            const buttonClass = `mt-3 inline-flex w-full cursor-pointer items-center justify-center rounded-full px-3 py-2 text-xs font-medium transition-all sm:mt-6 sm:px-6 sm:py-3 sm:text-sm lg:mt-8 ${
+              plan.popular
+                ? "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-primary/40"
+                : "border border-border bg-muted/50 text-foreground hover:border-foreground/20 hover:bg-accent"
+            }`;
+
+            return (
             <div
               key={plan.name}
               className={`relative flex h-full flex-col overflow-hidden rounded-2xl border backdrop-blur transition-all hover:-translate-y-1 sm:rounded-3xl ${
@@ -69,16 +81,15 @@ export default function Pricing() {
                   <span className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">{plan.price}</span>
                   {plan.period && <span className="mb-0.5 text-[10px] text-muted-foreground sm:mb-2 sm:text-sm">{plan.period}</span>}
                 </div>
-                <a
-                  href={plan.href || "/register"}
-                  className={`mt-3 inline-flex w-full items-center justify-center rounded-full px-3 py-2 text-xs font-medium transition-all sm:mt-6 sm:px-6 sm:py-3 sm:text-sm lg:mt-8 ${
-                    plan.popular
-                      ? "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-primary/40"
-                      : "border border-border bg-muted/50 text-foreground hover:border-foreground/20 hover:bg-accent"
-                  }`}
-                >
-                  {plan.button}
-                </a>
+                {plan.planId ? (
+                  <PlanAction planId={plan.planId} className={buttonClass}>
+                    {plan.button}
+                  </PlanAction>
+                ) : (
+                  <a href={plan.href} className={buttonClass}>
+                    {plan.button}
+                  </a>
+                )}
                 <ul className="mt-3 flex flex-1 flex-col gap-1.5 text-[10px] text-muted-foreground sm:mt-6 sm:gap-2 sm:text-sm lg:mt-8">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2">
@@ -91,7 +102,8 @@ export default function Pricing() {
                 </ul>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

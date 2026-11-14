@@ -21,7 +21,7 @@ api.interceptors.response.use(
   (error) => {
     if (typeof window !== "undefined" && error.response?.status === 401) {
       localStorage.removeItem("token");
-      if (window.location.pathname.startsWith("/chat") || window.location.pathname.startsWith("/profile") || window.location.pathname.startsWith("/admin")) {
+      if (window.location.pathname.startsWith("/chat") || window.location.pathname.startsWith("/profile") || window.location.pathname.startsWith("/payment") || window.location.pathname.startsWith("/admin")) {
         window.location.href = "/login";
       }
     }

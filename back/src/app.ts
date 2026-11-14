@@ -12,6 +12,7 @@ import attendanceRoutes from "./routes/attendanceRoutes";
 import noticeRoutes from "./routes/noticeRoutes";
 import collegeQueryRoutes from "./routes/collegeQueryRoutes";
 import userRoutes from "./routes/userRoutes";
+import paymentRoutes from "./routes/paymentRoutes";
 import { authMiddleware, adminMiddleware } from "./middleware/authMiddleware";
 
 
@@ -55,6 +56,7 @@ app.use("/admin/notices", noticeRoutes);
 
 app.use("/api/college", collegeQueryRoutes);
 app.use("/admin/users", userRoutes);
+app.use("/payments", paymentRoutes);
 
 
 

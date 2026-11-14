@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useAuthStore } from "@/app/store/authStore";
 
 export default function CTA() {
+  const user = useAuthStore((state) => state.user);
+
   return (
     <section id="contact" className="relative px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
       <div className="mx-auto w-full max-w-[1200px] overflow-hidden rounded-[2.5rem] border border-border">
@@ -26,7 +31,7 @@ export default function CTA() {
               <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-primary-foreground/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
             </Link>
             <Link
-              href="/register"
+              href={user ? "/chat" : "/register"}
               className="inline-flex items-center gap-2 rounded-full border border-border px-8 py-3 text-base text-foreground backdrop-blur transition-all hover:border-foreground/30 hover:bg-accent"
             >
               Create free account
